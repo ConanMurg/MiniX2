@@ -95,110 +95,110 @@ void GetInterlockStatus()
 	}
 }
 
-void TurnHVOn()
-{
-	if (chdpp.LibUsb_isConnected) { // send and receive status
-		cout << endl;
-		cout << "\tTurning On..." << endl;
+// void TurnHVOn()
+// {
+// 	if (chdpp.LibUsb_isConnected) { // send and receive status
+// 		cout << endl;
+// 		cout << "\tTurning On..." << endl;
 
-		string strHV = "15.0";
-		string strI = "15.0";
-		double dblHV;
-		double dblI;
-		string strCmd;
-		stringex strfn;
+// 		string strHV = "15.0";
+// 		string strI = "15.0";
+// 		double dblHV;
+// 		double dblI;
+// 		string strCmd;
+// 		stringex strfn;
 
-		dblHV = atof(strHV.c_str());
-		dblI = atof(strI.c_str());
-		//strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
-		strCmd = "HVSE=";
-		strCmd += strfn.Format("%0.1f;", dblHV);
-		strCmd += "CUSE=";
-		strCmd += strfn.Format("%0.1f;", dblI);
-
-
-		unsigned char DataOut[514];
-		int MaxDataLen=514;
-		int idxCh;
-		int DataLen;
-		DataLen = (int)strDataIn.length();
-		if (DataLen > 0) {
-			for(idxCh=0; idxCh < MaxDataLen; idxCh++) {
-				if (idxCh < DataLen) {
-					DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
-				} else {
-					DataOut[idxCh] = 0;
-				}
-			}
-
-			BOOL HaveBuffer;
-			BOOL SentPkt;
-
-			HaveBuffer = SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XMTPT_TEXT_CONFIGURATION_MX2, DataOut);
-			if (HaveBuffer) {
-				SentPkt = DppWinUSB.SendPacketUSB(DP5Proto.BufferOUT, DppWinUSB.devInfo, DP5Proto.PacketIn);
-				if (SentPkt) {
-					RemCallParsePacket(DP5Proto.PacketIn);
-					} else {
-					MiniX2.STATUS_MNX.bUSBError = true;
-				}
-			}
-		}
-	}
-}
+// 		dblHV = atof(strHV.c_str());
+// 		dblI = atof(strI.c_str());
+// 		//strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
+// 		strCmd = "HVSE=";
+// 		strCmd += strfn.Format("%0.1f;", dblHV);
+// 		strCmd += "CUSE=";
+// 		strCmd += strfn.Format("%0.1f;", dblI);
 
 
-void TurnHVOff()
-{
-	if (chdpp.LibUsb_isConnected) { // send and receive status
-		cout << endl;
-		cout << "\tTurning Off..." << endl;
+// 		unsigned char DataOut[514];
+// 		int MaxDataLen=514;
+// 		int idxCh;
+// 		int DataLen;
+// 		DataLen = (int)strDataIn.length();
+// 		if (DataLen > 0) {
+// 			for(idxCh=0; idxCh < MaxDataLen; idxCh++) {
+// 				if (idxCh < DataLen) {
+// 					DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
+// 				} else {
+// 					DataOut[idxCh] = 0;
+// 				}
+// 			}
 
-		string strHV = "0.0";
-		string strI = "0.0";
-		double dblHV;
-		double dblI;
-		string strCmd;
-		stringex strfn;
+// 			BOOL HaveBuffer;
+// 			BOOL SentPkt;
 
-		dblHV = atof(strHV.c_str());
-		dblI = atof(strI.c_str());
-		//strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
-		strCmd = "HVSE=";
-		strCmd += strfn.Format("%0.1f;", dblHV);
-		strCmd += "CUSE=";
-		strCmd += strfn.Format("%0.1f;", dblI);
+// 			HaveBuffer = SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XMTPT_TEXT_CONFIGURATION_MX2, DataOut);
+// 			if (HaveBuffer) {
+// 				SentPkt = DppWinUSB.SendPacketUSB(DP5Proto.BufferOUT, DppWinUSB.devInfo, DP5Proto.PacketIn);
+// 				if (SentPkt) {
+// 					RemCallParsePacket(DP5Proto.PacketIn);
+// 					} else {
+// 					MiniX2.STATUS_MNX.bUSBError = true;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
 
-		unsigned char DataOut[514];
-		int MaxDataLen=514;
-		int idxCh;
-		int DataLen;
-		DataLen = (int)strDataIn.length();
-		if (DataLen > 0) {
-			for(idxCh=0; idxCh < MaxDataLen; idxCh++) {
-				if (idxCh < DataLen) {
-					DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
-				} else {
-					DataOut[idxCh] = 0;
-				}
-			}
+// void TurnHVOff()
+// {
+// 	if (chdpp.LibUsb_isConnected) { // send and receive status
+// 		cout << endl;
+// 		cout << "\tTurning Off..." << endl;
 
-			BOOL HaveBuffer;
-			BOOL SentPkt;
+// 		string strHV = "0.0";
+// 		string strI = "0.0";
+// 		double dblHV;
+// 		double dblI;
+// 		string strCmd;
+// 		stringex strfn;
 
-			HaveBuffer = SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XMTPT_TEXT_CONFIGURATION_MX2, DataOut);
-			if (HaveBuffer) {
-				SentPkt = DppWinUSB.SendPacketUSB(DP5Proto.BufferOUT, DppWinUSB.devInfo, DP5Proto.PacketIn);
-				if (SentPkt) {
-					RemCallParsePacket(DP5Proto.PacketIn);
-					} else {
-					MiniX2.STATUS_MNX.bUSBError = true;
-				}
-			}
-		}
-	}
-}
+// 		dblHV = atof(strHV.c_str());
+// 		dblI = atof(strI.c_str());
+// 		//strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
+// 		strCmd = "HVSE=";
+// 		strCmd += strfn.Format("%0.1f;", dblHV);
+// 		strCmd += "CUSE=";
+// 		strCmd += strfn.Format("%0.1f;", dblI);
+
+
+// 		unsigned char DataOut[514];
+// 		int MaxDataLen=514;
+// 		int idxCh;
+// 		int DataLen;
+// 		DataLen = (int)strDataIn.length();
+// 		if (DataLen > 0) {
+// 			for(idxCh=0; idxCh < MaxDataLen; idxCh++) {
+// 				if (idxCh < DataLen) {
+// 					DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
+// 				} else {
+// 					DataOut[idxCh] = 0;
+// 				}
+// 			}
+
+// 			BOOL HaveBuffer;
+// 			BOOL SentPkt;
+
+// 			HaveBuffer = SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XMTPT_TEXT_CONFIGURATION_MX2, DataOut);
+// 			if (HaveBuffer) {
+// 				SentPkt = DppWinUSB.SendPacketUSB(DP5Proto.BufferOUT, DppWinUSB.devInfo, DP5Proto.PacketIn);
+// 				if (SentPkt) {
+// 					RemCallParsePacket(DP5Proto.PacketIn);
+// 					} else {
+// 					MiniX2.STATUS_MNX.bUSBError = true;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
 
 
 
@@ -474,13 +474,13 @@ int main(int argc, char* argv[])
 	cout << "Press the Enter key to continue . . .";
 	_getch();
 
-	TurnHVOn();
-	cout << "Press the Enter key to continue . . .";
-	_getch();
+	// TurnHVOn();
+	// cout << "Press the Enter key to continue . . .";
+	// _getch();
 
-	TurnHVOff();
-	cout << "Press the Enter key to continue . . .";
-	_getch();
+	// TurnHVOff();
+	// cout << "Press the Enter key to continue . . .";
+	// _getch();
 
 
 	//////	system("cls");

@@ -1,35 +1,30 @@
 # Makefile - gccDppConsoleMiniX2
 
+# Default to no (-O0) optimisation for Debug, Release has -O2 optimisation
 ifndef CFG
 CFG=Debug
 endif
+
 CC=gcc
 CFLAGS=
 CXX=g++
 CXXFLAGS=$(CFLAGS)
+
 ifeq "$(CFG)" "Debug"
-CFLAGS+=  -W -I./ -I/usr/include/libusb-1.0 -O0 -fexceptions -I../gccDppConsoleLinuxMiniX2/DeviceIO/ -I../gccDppConsoleLinuxMiniX2/ -g -fno-inline -D_DEBUG -D_CONSOLE 
-LD=$(CXX) $(CXXFLAGS)
-LDFLAGS=
-LDFLAGS+= 
-LIBS+= -L/usr/local/lib -lusb-1.0
-ifndef TARGET
-TARGET=gccDppConsoleMiniX2
-endif
+	CFLAGS+=  -W -I./ -I/usr/include/libusb-1.0 -O0 -fexceptions -I./DeviceIO/ -g -fno-inline -D_DEBUG -D_CONSOLE 
+	LD=$(CXX) $(CXXFLAGS)
+	LIBS+= -L/usr/local/lib -lusb-1.0
+
 ifeq "$(CFG)" "Release"
-CFLAGS+=  -W -I./ -I/usr/include/libusb-1.0 -O2 -fexceptions -I../gccDppConsoleLinux/DeviceIOMiniX2/ -I../gccDppConsoleLinuxMiniX2/ -g  -fno-inline   -DNDEBUG -D_CONSOLE 
-LD=$(CXX) $(CXXFLAGS)
-LDFLAGS=
-LDFLAGS+= 
-LIBS+= -L/usr/local/lib -lusb-1.0
-ifndef TARGET
+	CFLAGS+=  -W -I./ -I/usr/include/libusb-1.0 -O2 -fexceptions -I./DeviceIO/ -g  -fno-inline -DNDEBUG -D_CONSOLE 
+	LD=$(CXX) $(CXXFLAGS)
+	LIBS+= -L/usr/local/lib -lusb-1.0
+endif
+endif
+
+
 TARGET=gccDppConsoleMiniX2
-endif
-endif
-endif
-ifndef TARGET
-TARGET=gccDppConsoleMiniX2
-endif
+
 .PHONY: all
 all: $(TARGET)
 
@@ -98,10 +93,10 @@ $(TARGET): $(OBJS)
 .PHONY: clean
 clean:
 	-rm -f -v $(OBJS) $(TARGET) gccDppConsole.dep
+	-rm -f -v *.o
 
 .PHONY: depends
 depends:
 	-$(CXX) $(CXXFLAGS) $(CPPFLAGS) -MM $(filter %.c %.cc %.cpp %.cxx,$(SRCS)) > gccDppConsole.dep
 
 -include gccDppConsole.dep
-

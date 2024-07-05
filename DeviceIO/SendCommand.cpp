@@ -61,18 +61,18 @@ bool CSendCommand::DP5_CMD(unsigned char Buffer[], TRANSMIT_PACKET_TYPE XmtCmd)
             POUT.PID1 = PID1_REQ_STATUS;
             POUT.PID2 = PID2_SEND_DP4_STYLE_STATUS;   // send status only
 			break;	
-		case XMTPT_TEXT_CONFIGURATION_MX2:
-			strCfg = "";
-			strCfg = CfgOptions.HwCfgDP5Out;
-			lLen = (long)strCfg.length();
-			if (lLen > 0) {
-				strCfg = AsciiCmdUtil.MakeUpper(strCfg);
-				AsciiCmdUtil.CopyAsciiData(POUT.DATA, strCfg, lLen);
-			}
-			POUT.PID1 = PID1_REQ_CONFIG;
-			POUT.PID2 = PID2_TEXT_CONFIG_PACKET;   // text config packet
-			POUT.LEN = (unsigned short)lLen;
-			break;
+		// case XMTPT_TEXT_CONFIGURATION_MX2:
+		// 	strCfg = "";
+		// 	strCfg = CfgOptions.HwCfgDP5Out;
+		// 	lLen = (long)strCfg.length();
+		// 	if (lLen > 0) {
+		// 		strCfg = AsciiCmdUtil.MakeUpper(strCfg);
+		// 		AsciiCmdUtil.CopyAsciiData(POUT.DATA, strCfg, lLen);
+		// 	}
+		// 	POUT.PID1 = PID1_REQ_CONFIG;
+		// 	POUT.PID2 = PID2_TEXT_CONFIG_PACKET;   // text config packet
+		// 	POUT.LEN = (unsigned short)lLen;
+		// 	break;
         //case XMTPT_SEND_SPECTRUM:
 			//break;
         //case XMTPT_SEND_CLEAR_SPECTRUM:
