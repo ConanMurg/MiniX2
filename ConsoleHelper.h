@@ -14,6 +14,12 @@
 #include "DP5Status.h"			// Status Decoder
 #include <time.h>				// time library for rand seed
 
+typedef int BOOL;
+#define TRUE 1
+#define FALSE 0
+
+typedef unsigned char BYTE;
+
 typedef struct _SpectrumFileType {
     string strTag;
     string strDescription;
@@ -35,6 +41,14 @@ public:
 	bool LibUsb_isConnected;
 	/// LibUsb number of devices found.
 	int  LibUsb_NumDevices;
+	/// Turn HV on / off
+	void SendMX2_HVandI(string strHV, string strI);
+	/// Find HV and I configuration
+	bool ReadbackMX2_HVandI(float *sngHV, float *sngI);
+	/// Send Command
+	void SendCommandDataMX2(TRANSMIT_PACKET_TYPE XmtCmd, string strDataIn);
+	/// Send Command
+	void SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[]);
 	/// LibUsb connect to the default DPP.
 	bool LibUsb_Connect_Default_DPP();
 	/// LibUsb close the current connection.

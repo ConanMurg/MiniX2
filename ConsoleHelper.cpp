@@ -4,6 +4,7 @@
 #include "stringSplit.h"
 #include "stringex.h"
 #include <string.h>
+// #include "stdafx.h"
 
 using namespace stringSplit;
 
@@ -19,6 +20,107 @@ CConsoleHelper::CConsoleHelper(void)
 CConsoleHelper::~CConsoleHelper(void)
 {
 }
+
+
+void CConsoleHelper::SendMX2_HVandI(string strHV, string strI)
+{
+	double dblHV;
+	double dblI;
+    string strCmd;
+	stringex strfn;
+
+	dblHV = atof(strHV.c_str());
+	dblI = atof(strI.c_str());
+    //strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
+	strCmd = "HVSE=";
+	strCmd += strfn.Format("%0.1f;", dblHV);
+	strCmd += "CUSE=";
+	strCmd += strfn.Format("%0.1f;", dblI);
+
+    SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
+}
+
+bool CConsoleHelper::ReadbackMX2_HVandI(float *sngHV, float *sngI)
+{
+    //CMSecTimer tmr;
+    string strCmd;
+//    bool bCfgCmdDone;
+    string strHV;
+    string strI;
+    float sngHV_In;
+    float sngI_In;
+    bool bReadbackMX2_HVandI;
+	float fltTemp;
+//    
+    bReadbackMX2_HVandI = false;
+    strCmd = "HVSE=?;CUSE=?;";
+    // MiniX2.strMX2CfgIn = "";
+    // MiniX2.bMX2CfgReady = false;
+    // SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
+    // //tmr.msTimer(100);
+    // //strStatus = "bMX2CfgReady: " + CStr(bMX2CfgReady)
+    // if (MiniX2.bMX2CfgReady) {                      //1. get decoded message values
+    //     strHV = GetCmdData("HVSE", MiniX2.strMX2CfgIn);
+    //     strI = GetCmdData("CUSE", MiniX2.strMX2CfgIn);
+    // }
+    // sngHV_In = *sngHV;
+    // sngI_In = *sngI;                             //2. compare to input values
+	// fltTemp = StringToFloat(strHV);
+    // if (sngHV_In != fltTemp) {      //3. if different set flag and replace values
+    //     bReadbackMX2_HVandI = true;
+    //     *sngHV = fltTemp;
+    // }
+	// fltTemp = StringToFloat(strI);
+    // if (sngI_In != fltTemp) {
+    //     bReadbackMX2_HVandI = true;
+    //     *sngI = fltTemp;
+    // }
+	// return(bReadbackMX2_HVandI);
+	return(true);
+}
+
+
+void CConsoleHelper::SendCommandDataMX2(TRANSMIT_PACKET_TYPE XmtCmd, string strDataIn)
+{
+	unsigned char DataOut[514];
+	int MaxDataLen=514;
+	int idxCh;
+	int DataLen;
+	DataLen = (int)strDataIn.length();
+	if (DataLen > 0) {
+		for(idxCh=0;idxCh<MaxDataLen;idxCh++) {
+			if (idxCh < DataLen) {
+				DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
+			} else {
+				DataOut[idxCh] = 0;
+			}
+		}
+		SendCommandData(XmtCmd, DataOut);
+	}
+}
+
+
+
+void CConsoleHelper::SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[])
+{
+    bool bHaveBuffer;
+	int bSentPkt;
+	bool bMessageSent;
+
+    bHaveBuffer = (bool) SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XmtCmd, DataOut);
+    if (bHaveBuffer) {
+		bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
+        if (bSentPkt) {
+			bMessageSent = true;
+			//RemCallParsePacket(DP5Proto.PacketIn);
+		} // else {
+        //     MiniX2.STATUS_MNX.bUSBError = true;
+        // }
+    }
+}
+
+
+
 
 bool CConsoleHelper::LibUsb_Connect_Default_DPP()
 {
@@ -140,6 +242,7 @@ bool CConsoleHelper::LibUsb_SendCommand_Config(TRANSMIT_PACKET_TYPE XmtCmd, CONF
 	}
 	return (bMessageSent);
 }
+
 
 bool CConsoleHelper::LibUsb_ReceiveData()
 {
