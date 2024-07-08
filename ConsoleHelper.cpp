@@ -38,6 +38,7 @@ void CConsoleHelper::SendMX2_HVandI(string stringHV, string stringI)
 	strCmd += strfn.Format("%0.1f;", dblHV);
 	strCmd += "CUSE=";
 	strCmd += strfn.Format("%0.1f;", dblI);
+	cout << strCmd << endl;
 
     SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
 }
@@ -322,9 +323,11 @@ bool CConsoleHelper::ReceiveData()
 		// case preqProcessFaultRecordMX2:
 		// 	ProcessFaultRecordMX2Ex(PIN, DppState);
 		// 	break;
-		//case preqProcessAck:
-		//	ProcessAck(DP5Proto.PIN.PID2);
-		//	break;
+		case preqProcessAck:
+			cout << "ProcessAck" << endl;
+			cout << ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2) << endl;
+			// ProcessAck(DP5Proto.PIN.PID2);
+			break;
 		//case preqProcessError:
 		//	DisplayError(DP5Proto.PIN, ParsePkt.DppState);
 		//	break;
@@ -423,7 +426,7 @@ void CConsoleHelper::ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState)
 		strCh = strfn.Format("%c",PIN.DATA[idxCfg]);
 		strRawCfgIn += strCh;
 	}
-
+	cout << "Raw Config: " << strRawCfgIn << endl;
 	if (strRawCfgIn.length() > 0) {
 		strMX2CfgIn = strRawCfgIn;
 		bMX2CfgReady = true;

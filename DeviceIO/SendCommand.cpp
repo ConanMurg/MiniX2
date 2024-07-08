@@ -492,6 +492,24 @@ bool CSendCommand::DP5_CMD_Data(unsigned char Buffer[], TRANSMIT_PACKET_TYPE Xmt
 				bCmdFound = false;
 			}
 			break;
+		case XMTPT_TEXT_CONFIGURATION_MX2:
+			strCfg = "";
+			strCfg = strfn.Format("%s",DataOut);
+			lLen = (long)strCfg.length();
+			if (lLen > 0) {
+				strCfg = AsciiCmdUtil.MakeUpper(strCfg);
+				AsciiCmdUtil.CopyAsciiData(POUT.DATA, strCfg, lLen);
+				bCmdFound = true;
+				POUT.PID1 = PID1_REQ_CONFIG;
+				POUT.PID2 = PID2_TEXT_CONFIG_PACKET;
+				POUT.LEN  = (unsigned short)lLen;
+				if (! POUT_Buffer(POUT, Buffer)) {
+					bCmdFound = false;
+				}
+			} else {
+				bCmdFound = false;
+			}
+			break;
 		default:
             bCmdFound = false;
 			break;

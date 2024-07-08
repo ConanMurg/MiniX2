@@ -59,9 +59,9 @@ void GetDppStatus()
 			if (chdpp.LibUsb_ReceiveData()) {
 				cout << "\t\t\tStatus received..." << endl;
 				cout << chdpp.DppStatusString << endl;
-				bRunSpectrumTest = false; // set these back to true later on!! EDITS REQUIRED
-				bHaveStatusResponse = false; // set to true
-				bRunConfigurationTest = false; // set to true
+				// bRunSpectrumTest = false; // set these back to true later on!! EDITS REQUIRED
+				// bHaveStatusResponse = false; // set to true
+				// bRunConfigurationTest = false; // set to true
 			} else {
 				cout << "\t\tError receiving status." << endl;
 			}
@@ -110,8 +110,8 @@ void ReadHVCfg()
 	chdpp.ReadbackMX2_HVandI();
 	if (chdpp.LibUsb_ReceiveData()) {
 		cout << "\t\t\tReceiving Voltage and Current..." << endl;
-		// cout << "\t\t\tVoltage: " << chdpp.strHV << endl;
-		// cout << "\t\t\tCurrent: " << chdpp.strI << endl;
+		cout << "\t\t\tVoltage: " << chdpp.strHV << endl;
+		cout << "\t\t\tCurrent: " << chdpp.strI << endl;
 		//cout << chdpp.DppStatusString << endl;
 	} else {
 		cout << "\t\tError receiving Voltage and Current Status." << endl;
@@ -119,8 +119,26 @@ void ReadHVCfg()
 }
 
 
+// void ReadHVandI()
+// {
+// 	if (chdpp.LibUsb_isConnected) { // send and receive status
+// 		cout << endl;
+// 		cout << "\tRequesting HV and I..." << endl;
+// 		chdpp.ReadbackMX2_HVandI();
+// 		cout << "\t\tRequested." << endl;
+// 		if (chdpp.LibUsb_ReceiveData()) {
+// 			cout << "\t\t\tInterlock Status received..." << endl;
+// 			cout << "\t\t\t\tHighVoltage"<< chdpp.strHV << endl;
+// 			//cout << chdpp.DppStatusString << endl;
+// 		} else {
+// 			cout << "\t\tError receiving Interlock Status." << endl;
+// 		}
+// 	}
+// }
+
 void TurnHVOn()
 {
+	cout << "\t\t\tTurning Tube On Now" << endl;
 	//CMSecTimer tmr;
 	float sngHV;
 	float sngI;
@@ -136,6 +154,12 @@ void TurnHVOn()
 	
 	//strStatus = FloatToString(sngHV,1) + "kV : " + FloatToString(sngI,1) + "uA";
 	chdpp.SendMX2_HVandI(stringHV, stringI);
+	if (chdpp.LibUsb_ReceiveData()) {
+		cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
+		
+	} else {
+		cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
+	}
 
 	//bValueChanged = chdpp.ReadbackMX2_HVandI(&sngHV, &sngI);
 
@@ -156,6 +180,7 @@ void TurnHVOn()
 
 void TurnHVOff()
 {
+	cout << "\t\t\tTurning Tube Off Now" << endl;
 	float sngHV;
 	float sngI;
 	string stringHV;
@@ -498,33 +523,44 @@ int main(int argc, char* argv[])
 	_getch();
 
 	/// Read the voltage and current on the tube.
-	ReadHVCfg();
-	cout << "Press the Enter Key to continue . . .";
-	_getch();
+	// ReadHVCfg();
+	// cout << "Press the Enter Key to continue . . .";
+	// _getch();
 
 	bool bReadHVCfg;
-	bReadHVCfg = false;
+	bReadHVCfg = true;
 
 	if (bReadHVCfg) 
 	{
 		/// Turn the tube on to 15 kV and 15 uA
 		TurnHVOn();
+		GetDppStatus();
 		cout << "Press the Enter key to continue . . .";
 		_getch();
 
-		ReadHVCfg();
-		cout << "Press the Enter Key to continue . . .";
-		_getch();
+		
+		
+
+		// ReadHVCfg();
+		// cout << "Press the Enter Key to continue . . .";
+		// _getch();
 
 
 		/// Turn the tube off (set to 0 kV and 0 uA)
 		TurnHVOff();
+		GetDppStatus();
 		cout << "Press the Enter key to continue . . .";
 		_getch();
 
-		ReadHVCfg();
-		cout << "Press the Enter Key to continue . . .";
+		GetDppStatus();
+		cout << "Press the Enter key to continue . . .";
 		_getch();
+
+		
+
+		// ReadHVCfg();
+		// cout << "Press the Enter Key to continue . . .";
+		// _getch();
 	}
 	
 
