@@ -42,9 +42,9 @@ public:
 	/// LibUsb number of devices found.
 	int  LibUsb_NumDevices;
 	/// Turn HV on / off
-	void SendMX2_HVandI(string strHV, string strI);
+	void SendMX2_HVandI(string stringHV, string stringI);
 	/// Find HV and I configuration
-	bool ReadbackMX2_HVandI(float *sngHV, float *sngI);
+	void ReadbackMX2_HVandI();
 	/// Send Command
 	void SendCommandDataMX2(TRANSMIT_PACKET_TYPE XmtCmd, string strDataIn);
 	/// Send Command
@@ -84,6 +84,10 @@ public:
 	void ProcessSpectrumEx(Packet_In PIN, DppStateType DppState);
 	/// Clears configuration readback format flags. 
 	void ClearConfigReadFormatFlags();
+	string strHV;
+	string strI;
+	/// Processes configuration packets.
+	void ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState);
 	/// Processes configuration packets.
 	void ProcessCfgReadEx(Packet_In PIN, DppStateType DppState);
 	/// Populates the configuration command options data structure.

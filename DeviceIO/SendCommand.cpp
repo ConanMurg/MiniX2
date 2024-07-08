@@ -447,6 +447,9 @@ bool CSendCommand::DP5_CMD_Data(unsigned char Buffer[], TRANSMIT_PACKET_TYPE Xmt
     POUT.LEN = 0;
 	string strCfg;
 	long idxData;
+	stringex strfn;
+	long lLen;
+
 	switch (XmtCmd) {	//REQUEST_PACKETS_TO_DP5
         case XMTPT_WRITE_512_BYTE_MISC_DATA:
             POUT.PID1 = PID1_VENDOR_REQ;
@@ -469,6 +472,24 @@ bool CSendCommand::DP5_CMD_Data(unsigned char Buffer[], TRANSMIT_PACKET_TYPE Xmt
 					}
 					bCmdFound = true;
 				}
+			}
+			break;
+		case XMTPT_READ_TEXT_CONFIGURATION_MX2:
+			strCfg = "";
+			strCfg = strfn.Format("%s",DataOut);
+			lLen = (long)strCfg.length();
+			if (lLen > 0) {
+				strCfg = AsciiCmdUtil.MakeUpper(strCfg);
+				AsciiCmdUtil.CopyAsciiData(POUT.DATA, strCfg, lLen);
+				bCmdFound = true;
+				POUT.PID1 = PID1_REQ_CONFIG;
+				POUT.PID2 = PID2_CONFIG_READBACK_PACKET;
+				POUT.LEN  = (unsigned short)lLen;
+				if (! POUT_Buffer(POUT, Buffer)) {
+					bCmdFound = false;
+				}
+			} else {
+				bCmdFound = false;
 			}
 			break;
 		default:

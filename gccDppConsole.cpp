@@ -105,10 +105,17 @@ void ReadHVCfg()
 {
 	cout << endl;
 	cout << "\tRequesting HV and I Configuration..." << endl;
-	float sngHV;
-	float sngI;
-	chdpp.ReadbackMX2_HVandI(&sngHV, &sngI);
-	cout << "\tVoltage: " << sngHV << "Current: " << sngI << endl;
+	// float sngHV;
+	// float sngI;
+	chdpp.ReadbackMX2_HVandI();
+	if (chdpp.LibUsb_ReceiveData()) {
+		cout << "\t\t\tReceiving Voltage and Current..." << endl;
+		// cout << "\t\t\tVoltage: " << chdpp.strHV << endl;
+		// cout << "\t\t\tCurrent: " << chdpp.strI << endl;
+		//cout << chdpp.DppStatusString << endl;
+	} else {
+		cout << "\t\tError receiving Voltage and Current Status." << endl;
+	}
 }
 
 
@@ -117,20 +124,20 @@ void TurnHVOn()
 	//CMSecTimer tmr;
 	float sngHV;
 	float sngI;
-	string strHV;
-	string strI;
+	string stringHV;
+	string stringI;
 	bool bValueChanged;
 	//string strStatus;
 
 	sngHV = 15.0;
 	sngI = 15.0;
-	strHV = "15.0";
-	strI = "15.0";
+	stringHV = "15.0";
+	stringI = "15.0";
 	
 	//strStatus = FloatToString(sngHV,1) + "kV : " + FloatToString(sngI,1) + "uA";
-	chdpp.SendMX2_HVandI(strHV, strI);
+	chdpp.SendMX2_HVandI(stringHV, stringI);
 
-	bValueChanged = chdpp.ReadbackMX2_HVandI(&sngHV, &sngI);
+	//bValueChanged = chdpp.ReadbackMX2_HVandI(&sngHV, &sngI);
 
 	// m_pParentMX2->SendMX2_HVandI(strHV, strI);
 	// tmr.msTimer(100);
@@ -151,16 +158,16 @@ void TurnHVOff()
 {
 	float sngHV;
 	float sngI;
-	string strHV;
-	string strI;
+	string stringHV;
+	string stringI;
 	bool bValueChanged;
 
 	sngHV = 0.0;
 	sngI = 0.0;
-	strHV = "0.0";
-	strI = "0.0";
+	stringHV = "0.0";
+	stringI = "0.0";
 	
-	chdpp.SendMX2_HVandI(strHV, strI);
+	chdpp.SendMX2_HVandI(stringHV, stringI);
 }
 
 
@@ -505,9 +512,18 @@ int main(int argc, char* argv[])
 		cout << "Press the Enter key to continue . . .";
 		_getch();
 
+		ReadHVCfg();
+		cout << "Press the Enter Key to continue . . .";
+		_getch();
+
+
 		/// Turn the tube off (set to 0 kV and 0 uA)
 		TurnHVOff();
 		cout << "Press the Enter key to continue . . .";
+		_getch();
+
+		ReadHVCfg();
+		cout << "Press the Enter Key to continue . . .";
 		_getch();
 	}
 	

@@ -156,6 +156,7 @@ long CParsePacket::ParsePacket(unsigned char P[], Packet_In *PIN)
             ParsePkt = preqProcessPaCal;
         } else if (PIN->PID1 == PID1_ACK) {
             ParsePkt = preqProcessAck;
+            // cout << "Pin1: " << PIN->PID1 << "  Pin2: " << PIN->PID2 << endl;
         } else {
             PIN->STATUS = PID2_ACK_PID_ERROR;  // unknown PID
             ParsePkt = preqProcessError;

@@ -15,6 +15,8 @@ CConsoleHelper::CConsoleHelper(void)
 	LibUsb_NumDevices = 0;
 	DppStatusString = "";
 	strTubeInterlockTable = "";
+	strHV = "";
+	strI = "";
 }
 
 CConsoleHelper::~CConsoleHelper(void)
@@ -22,15 +24,15 @@ CConsoleHelper::~CConsoleHelper(void)
 }
 
 
-void CConsoleHelper::SendMX2_HVandI(string strHV, string strI)
+void CConsoleHelper::SendMX2_HVandI(string stringHV, string stringI)
 {
 	double dblHV;
 	double dblI;
     string strCmd;
 	stringex strfn;
 
-	dblHV = atof(strHV.c_str());
-	dblI = atof(strI.c_str());
+	dblHV = atof(stringHV.c_str());
+	dblI = atof(stringI.c_str());
     //strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
 	strCmd = "HVSE=";
 	strCmd += strfn.Format("%0.1f;", dblHV);
@@ -40,13 +42,12 @@ void CConsoleHelper::SendMX2_HVandI(string strHV, string strI)
     SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
 }
 
-bool CConsoleHelper::ReadbackMX2_HVandI(float *sngHV, float *sngI)
+void CConsoleHelper::ReadbackMX2_HVandI()
 {
     //CMSecTimer tmr;
     string strCmd;
 //    bool bCfgCmdDone;
-    string strHV;
-    string strI;
+    
     float sngHV_In;
     float sngI_In;
     bool bReadbackMX2_HVandI;
@@ -56,7 +57,7 @@ bool CConsoleHelper::ReadbackMX2_HVandI(float *sngHV, float *sngI)
     strCmd = "HVSE=?;CUSE=?;";
     // MiniX2.strMX2CfgIn = "";
     // MiniX2.bMX2CfgReady = false;
-    // SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
+    SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
     // //tmr.msTimer(100);
     // //strStatus = "bMX2CfgReady: " + CStr(bMX2CfgReady)
     // if (MiniX2.bMX2CfgReady) {                      //1. get decoded message values
@@ -76,7 +77,7 @@ bool CConsoleHelper::ReadbackMX2_HVandI(float *sngHV, float *sngI)
     //     *sngI = fltTemp;
     // }
 	// return(bReadbackMX2_HVandI);
-	return(true);
+	//return(true);
 }
 
 
@@ -109,14 +110,18 @@ void CConsoleHelper::SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[]
 
     bHaveBuffer = (bool) SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XmtCmd, DataOut);
     if (bHaveBuffer) {
+		cout << "bhavebuffer: " << bHaveBuffer << endl;
 		bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
         if (bSentPkt) {
 			bMessageSent = true;
 			//RemCallParsePacket(DP5Proto.PacketIn);
-		} // else {
-        //     MiniX2.STATUS_MNX.bUSBError = true;
-        // }
-    }
+		}  else {
+			cout << "bSentPkt is false" << endl;
+		//     MiniX2.STATUS_MNX.bUSBError = true;
+        }
+    } else {
+		cout << "Does not have buffer" << endl;
+	}
 }
 
 
@@ -250,6 +255,7 @@ bool CConsoleHelper::LibUsb_ReceiveData()
 
 	bDataReceived = true;
 	if (DppLibUsb.bDeviceConnected) { 
+		// cout << "Receive Data" << endl;
 		bDataReceived = ReceiveData();
 	}
 	return (bDataReceived);
@@ -266,7 +272,7 @@ bool CConsoleHelper::ReceiveData()
 
 	bDataReceived = true;
 	ParsePkt.DppState.ReqProcess = ParsePkt.ParsePacket(DP5Proto.PacketIn, &DP5Proto.PIN);
-	// cout << ParsePkt.DppState.ReqProcess << endl;
+	//cout << "ParsePkt: " << ParsePkt.DppState.ReqProcess << endl;
 	switch (ParsePkt.DppState.ReqProcess) {
 		case preqProcessStatus:
 			long idxStatus;
@@ -301,7 +307,8 @@ bool CConsoleHelper::ReceiveData()
 		//	ProcessDiagDataEx(DP5Proto.PIN, ParsePkt.DppState);
 		//	break;
 		case preqProcessCfgRead:
-			ProcessCfgReadEx(DP5Proto.PIN, ParsePkt.DppState);
+			ProcessCfgReadM2Ex(DP5Proto.PIN, ParsePkt.DppState);
+			//cout << "ProcessCgfReadM2Ex" << endl;
 			break;
 		case preqProcessTubeInterlockTableMX2:
 			ProcessTubeInterlockTableMX2Ex(DP5Proto.PIN, ParsePkt.DppState);
@@ -394,6 +401,39 @@ void CConsoleHelper::ClearConfigReadFormatFlags()
 	PrintCfg = false;			// format configuration for print
 	HwCfgReady = false;			// configuration ready flag
 	ScaReadBack = false;		// sca readback ready flag
+}
+
+
+void CConsoleHelper::ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState)
+{
+	string strRawCfgIn;
+	string strRawCfgOut;
+	stringex strfn;
+	string strMX2CfgIn;
+	string strCh;
+	string strHV("");
+	string strI("");
+
+	bool bMX2CfgReady;
+
+	strRawCfgOut = "";
+	// ==========================================================
+	// ===== Create Raw Configuration Buffer From Hardware ======
+	for (int idxCfg=0;idxCfg<PIN.LEN;idxCfg++) {
+		strCh = strfn.Format("%c",PIN.DATA[idxCfg]);
+		strRawCfgIn += strCh;
+	}
+
+	if (strRawCfgIn.length() > 0) {
+		strMX2CfgIn = strRawCfgIn;
+		bMX2CfgReady = true;
+	}
+	
+	strHV = GetCmdData("HVSE", strMX2CfgIn);
+	cout << "Voltage: " << strHV << endl;
+    strI = GetCmdData("CUSE", strMX2CfgIn);
+	cout << "Current: " << strI << endl;
+
 }
 
 void CConsoleHelper::ProcessCfgReadEx(Packet_In PIN, DppStateType DppState)

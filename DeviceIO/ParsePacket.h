@@ -3,6 +3,7 @@
 
 #include <string>
 #include "DP5Protocol.h"
+#include <iostream>
 using namespace std; 
 
 typedef enum _CommType {
