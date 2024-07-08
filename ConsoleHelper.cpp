@@ -43,6 +43,11 @@ void CConsoleHelper::SendMX2_HVandI(string stringHV, string stringI)
     SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
 }
 
+void CConsoleHelper::DailyWarmup()
+{
+	LibUsb_SendCommand(PID2_INIT_MX2_WARMUP_SEQUENCE);
+}
+
 void CConsoleHelper::ReadbackMX2_HVandI()
 {
     //CMSecTimer tmr;
@@ -90,7 +95,7 @@ void CConsoleHelper::SendCommandDataMX2(TRANSMIT_PACKET_TYPE XmtCmd, string strD
 	int DataLen;
 	DataLen = (int)strDataIn.length();
 	if (DataLen > 0) {
-		for(idxCh=0;idxCh<MaxDataLen;idxCh++) {
+		for(idxCh=0; idxCh < MaxDataLen; idxCh++) {
 			if (idxCh < DataLen) {
 				DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
 			} else {

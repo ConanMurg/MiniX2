@@ -273,6 +273,19 @@ bool CSendCommand::DP5_CMD(unsigned char Buffer[], TRANSMIT_PACKET_TYPE XmtCmd)
             POUT.PID2 = PID2_SEND_OPTION_PA_CALIBRATION; 
             POUT.LEN = 0;
 			break;
+    //----------------------------------------------------------------
+        case XMTPT_INITIATE_WARMUP_DAILY_SEQUENCE_MX2:
+            POUT.PID1 = PID1_VENDOR_REQ;
+            POUT.PID2 = PID2_INIT_MX2_WARMUP_SEQUENCE;   // Run warm-up sequence
+            POUT.LEN = 1;
+            POUT.DATA[0] = 0;                           // daily warm-up
+			break;
+        case XMTPT_INITIATE_WARMUP_MONTHLY_SEQUENCE_MX2:
+            POUT.PID1 = PID1_VENDOR_REQ;
+            POUT.PID2 = PID2_INIT_MX2_WARMUP_SEQUENCE;   // Run warm-up sequence
+            POUT.LEN = 1;
+            POUT.DATA[0] = 1;                            // monthly warm-up
+			break;
 		default:
             bCmdFound = false;
 			break;

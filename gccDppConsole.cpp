@@ -176,6 +176,17 @@ void TurnHVOn()
 	}
 }
 
+void warmup()
+{
+	cout << "Running Daily Warmup" << endl;
+	chdpp.DailyWarmup();
+	if (chdpp.LibUsb_ReceiveData()) {
+		cout << "\t\t\tStatus received..." << endl;
+		} else {
+		cout << "\t\tError starting warmup." << endl;
+		}
+}
+
 
 void TurnHVOff()
 {
