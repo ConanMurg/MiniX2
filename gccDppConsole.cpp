@@ -532,19 +532,51 @@ int main(int argc, char* argv[])
 	// ReadHVCfg();
 	// cout << "Press the Enter Key to continue . . .";
 	// _getch();
+	int userInput;
+
+
+
+	while (true) {
+		cout << "1 - Status, 2 - TurnHVOff, 3 - TurnHVOn, 4 - Disconnect USB" << endl;
+		cin >> userInput;
+
+		if (userInput == 0) {
+			break;
+		}
+
+		switch (userInput) {
+			case 1:
+				GetDppStatus();
+				break;
+			case 2:
+				TurnHVOff();
+				break;
+			case 3:
+				TurnHVOn();
+				break;
+			case 4:
+				CloseConnection();
+				return 0;
+				break;
+			default:
+				cout << "Invalid Input" << endl;
+		}
+	}
+
 
 	bool bReadHVCfg;
-	bReadHVCfg = true;
+	bReadHVCfg = false;
 
 	if (bReadHVCfg) 
 	{
 		/// Turn the tube on to 15 kV and 15 uA
 		TurnHVOn();
-		GetDppStatus();
 		cout << "Press the Enter key to continue . . .";
 		_getch();
 
-		
+		GetDppStatus();
+		cout << "Press the Enter key to continue . . .";
+		_getch();
 		
 
 		// ReadHVCfg();
@@ -554,9 +586,10 @@ int main(int argc, char* argv[])
 
 		/// Turn the tube off (set to 0 kV and 0 uA)
 		TurnHVOff();
-		GetDppStatus();
 		cout << "Press the Enter key to continue . . .";
 		_getch();
+
+
 
 		GetDppStatus();
 		cout << "Press the Enter key to continue . . .";

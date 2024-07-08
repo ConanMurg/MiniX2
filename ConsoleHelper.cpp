@@ -139,31 +139,31 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 //			MiniX2.isMiniX2 = false;
 //            ProcessStatusEx(PIN, DppState);
 //            break;
-        case preqProcessStatusMX2:
-			// MiniX2.isMiniX2 = true;
-            // ProcessStatusExMX2(PIN, DppState);
-            break;
-        case preqProcessTextData:
-            ProcessTextDataEx(PIN, DppState);
-            break;
-        case preqProcessCfgRead:
-            ProcessCfgReadM2Ex(PIN, DppState);
-            break;
+        // case preqProcessStatusMX2:
+		// 	// MiniX2.isMiniX2 = true;
+        //     // ProcessStatusExMX2(PIN, DppState);
+        //     break;
+        // case preqProcessTextData:
+        //     ProcessTextDataEx(PIN, DppState);
+        //     break;
+        // case preqProcessCfgRead:
+        //     ProcessCfgReadM2Ex(PIN, DppState);
+        //     break;
 ///====================================================================
 //       Process Mini-X2 Receive Packets
 //====================================================================
-        case preqProcessTubeInterlockTableMX2:
-            ProcessTubeInterlockTableMX2Ex(PIN, DppState);
-            break;
-        case preqProcessWarmupTableMX2:
-            ProcessWarmupTableMX2Ex(PIN, DppState);
-            break;
-        case preqProcessTimestampRecordMX2:
-            // ProcessTimestampRecordMX2Ex(PIN, DppState);
-            break;
-        case preqProcessFaultRecordMX2:
-            // ProcessFaultRecordMX2Ex(PIN, DppState);
-            break;
+        // case preqProcessTubeInterlockTableMX2:
+        //     ProcessTubeInterlockTableMX2Ex(PIN, DppState);
+        //     break;
+        // case preqProcessWarmupTableMX2:
+        //     ProcessWarmupTableMX2Ex(PIN, DppState);
+        //     break;
+        // case preqProcessTimestampRecordMX2:
+        //     // ProcessTimestampRecordMX2Ex(PIN, DppState);
+        //     break;
+        // case preqProcessFaultRecordMX2:
+        //     // ProcessFaultRecordMX2Ex(PIN, DppState);
+        //     break;
         case preqProcessAck:
 			cout << "ProcessAck" << endl;
 			cout << ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2) << endl;
@@ -175,6 +175,7 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 //            break;
         default:
             //do nothing
+			cout << "Default" << endl;
             break;
     }
 }

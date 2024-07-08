@@ -52,7 +52,7 @@ public:
 	// 
 	void RemCallParsePacket(BYTE PacketIn[]);
 	//
-	void ParsePacketEx(Packet_In PIN, DppStateType DppState)
+	void ParsePacketEx(Packet_In PIN, DppStateType DppState);
 	
 	/// LibUsb connect to the default DPP.
 	bool LibUsb_Connect_Default_DPP();
