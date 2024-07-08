@@ -548,7 +548,7 @@ int main(int argc, char* argv[])
 
 
 	while (true) {
-		cout << "1 - Status, 2 - TurnHVOff, 3 - TurnHVOn, 4 - Disconnect USB" << endl;
+		cout << "1 - Status, 2 - TurnHVOff, 3 - TurnHVOn, 4 - Disconnect USB, 5 - Daily Warmup" << endl;
 		cin >> userInput;
 
 		if (userInput == 0) {
@@ -568,6 +568,9 @@ int main(int argc, char* argv[])
 			case 4:
 				CloseConnection();
 				return 0;
+				break;
+			case 5:
+				warmup();
 				break;
 			default:
 				cout << "Invalid Input" << endl;
