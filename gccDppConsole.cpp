@@ -140,41 +140,40 @@ void TurnHVOn()
 {
 	cout << "\t\t\tTurning Tube On Now" << endl;
 	//CMSecTimer tmr;
-	float sngHV;
-	float sngI;
 	string stringHV;
 	string stringI;
-	bool bValueChanged;
 	//string strStatus;
 
-	sngHV = 15.0;
-	sngI = 15.0;
-	stringHV = "15.0";
-	stringI = "15.0";
+	stringHV = "15";
+	stringI = "15";
 	
 	//strStatus = FloatToString(sngHV,1) + "kV : " + FloatToString(sngI,1) + "uA";
-	chdpp.SendMX2_HVandI(stringHV, stringI);
-	if (chdpp.LibUsb_ReceiveData()) {
-		cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
-		
+	if (chdpp.LibUsb_isConnected) { // send and receive status
+		chdpp.SendMX2_HVandI(stringHV, stringI);
+		if (chdpp.LibUsb_ReceiveData()) {
+			cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
+			
+		} else {
+			cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
+		}
+
+		//bValueChanged = chdpp.ReadbackMX2_HVandI(&sngHV, &sngI);
+
+		// m_pParentMX2->SendMX2_HVandI(strHV, strI);
+		// tmr.msTimer(100);
+		// bValueChanged = m_pParentMX2->ReadbackMX2_HVandI(&sngHV, &sngI);
+
+		// strStatus = FloatToString(sngHV,1) + "kV : " + FloatToString(sngI,1) + "uA";
+		// strStatus = FloatToString(sngHV, 1) + "kV" + " : " + FloatToString(sngI, 1) + "uA";
+		// if (bValueChanged) {
+		//     strHV = FloatToString(sngHV, 1);
+		// 	DisplayDouble(IDC_SETHIGHVOLTAGECONTROLEDIT, sngHV, 1);
+		//     strI = FloatToString(sngI, 1);
+		// 	DisplayDouble(IDC_SETCURRENTCONTROLEDIT, sngI, 1);
+		// }
 	} else {
-		cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
+		cout << "Device not connected" << endl;
 	}
-
-	//bValueChanged = chdpp.ReadbackMX2_HVandI(&sngHV, &sngI);
-
-	// m_pParentMX2->SendMX2_HVandI(strHV, strI);
-	// tmr.msTimer(100);
-	// bValueChanged = m_pParentMX2->ReadbackMX2_HVandI(&sngHV, &sngI);
-
-	// strStatus = FloatToString(sngHV,1) + "kV : " + FloatToString(sngI,1) + "uA";
-	// strStatus = FloatToString(sngHV, 1) + "kV" + " : " + FloatToString(sngI, 1) + "uA";
-	// if (bValueChanged) {
-	//     strHV = FloatToString(sngHV, 1);
-	// 	DisplayDouble(IDC_SETHIGHVOLTAGECONTROLEDIT, sngHV, 1);
-	//     strI = FloatToString(sngI, 1);
-	// 	DisplayDouble(IDC_SETCURRENTCONTROLEDIT, sngI, 1);
-	// }
 }
 
 
@@ -191,8 +190,15 @@ void TurnHVOff()
 	sngI = 0.0;
 	stringHV = "0.0";
 	stringI = "0.0";
-	
-	chdpp.SendMX2_HVandI(stringHV, stringI);
+	if (chdpp.LibUsb_isConnected) { // send and receive status
+		chdpp.SendMX2_HVandI(stringHV, stringI);
+
+		if (chdpp.LibUsb_ReceiveData()) {
+			cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
+		} else {
+			cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
+		}
+	}
 }
 
 

@@ -475,6 +475,7 @@ bool CSendCommand::DP5_CMD_Data(unsigned char Buffer[], TRANSMIT_PACKET_TYPE Xmt
 			}
 			break;
 		case XMTPT_READ_TEXT_CONFIGURATION_MX2:
+			// Readback configuration settings from tube
 			strCfg = "";
 			strCfg = strfn.Format("%s",DataOut);
 			lLen = (long)strCfg.length();
@@ -493,6 +494,7 @@ bool CSendCommand::DP5_CMD_Data(unsigned char Buffer[], TRANSMIT_PACKET_TYPE Xmt
 			}
 			break;
 		case XMTPT_TEXT_CONFIGURATION_MX2:
+			// Send configuration settings from tube
 			strCfg = "";
 			strCfg = strfn.Format("%s",DataOut);
 			lLen = (long)strCfg.length();

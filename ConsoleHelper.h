@@ -49,6 +49,11 @@ public:
 	void SendCommandDataMX2(TRANSMIT_PACKET_TYPE XmtCmd, string strDataIn);
 	/// Send Command
 	void SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[]);
+	// 
+	void RemCallParsePacket(BYTE PacketIn[]);
+	//
+	void ParsePacketEx(Packet_In PIN, DppStateType DppState)
+	
 	/// LibUsb connect to the default DPP.
 	bool LibUsb_Connect_Default_DPP();
 	/// LibUsb close the current connection.

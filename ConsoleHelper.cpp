@@ -115,9 +115,9 @@ void CConsoleHelper::SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[]
 		bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
         if (bSentPkt) {
 			bMessageSent = true;
-			//RemCallParsePacket(DP5Proto.PacketIn);
+			RemCallParsePacket(DP5Proto.PacketIn);
 		}  else {
-			cout << "bSentPkt is false" << endl;
+			cout << "bSentPkt is false - failed to turn tube on" << endl;
 		//     MiniX2.STATUS_MNX.bUSBError = true;
         }
     } else {
@@ -125,6 +125,59 @@ void CConsoleHelper::SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[]
 	}
 }
 
+
+void CConsoleHelper::RemCallParsePacket(BYTE PacketIn[])
+{
+    ParsePkt.DppState.ReqProcess = ParsePkt.ParsePacket(PacketIn, &DP5Proto.PIN);
+    ParsePacketEx(DP5Proto.PIN, ParsePkt.DppState);
+}
+
+void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
+{
+    switch (DppState.ReqProcess) {
+//        case preqProcessStatus:
+//			MiniX2.isMiniX2 = false;
+//            ProcessStatusEx(PIN, DppState);
+//            break;
+        case preqProcessStatusMX2:
+			// MiniX2.isMiniX2 = true;
+            // ProcessStatusExMX2(PIN, DppState);
+            break;
+        case preqProcessTextData:
+            ProcessTextDataEx(PIN, DppState);
+            break;
+        case preqProcessCfgRead:
+            ProcessCfgReadM2Ex(PIN, DppState);
+            break;
+///====================================================================
+//       Process Mini-X2 Receive Packets
+//====================================================================
+        case preqProcessTubeInterlockTableMX2:
+            ProcessTubeInterlockTableMX2Ex(PIN, DppState);
+            break;
+        case preqProcessWarmupTableMX2:
+            ProcessWarmupTableMX2Ex(PIN, DppState);
+            break;
+        case preqProcessTimestampRecordMX2:
+            // ProcessTimestampRecordMX2Ex(PIN, DppState);
+            break;
+        case preqProcessFaultRecordMX2:
+            // ProcessFaultRecordMX2Ex(PIN, DppState);
+            break;
+        case preqProcessAck:
+			cout << "ProcessAck" << endl;
+			cout << ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2) << endl;
+            // ProcessAck(PIN.PID2);
+            break;
+			
+//        case preqProcessError:
+//            DisplayError(PIN, DppState);
+//            break;
+        default:
+            //do nothing
+            break;
+    }
+}
 
 
 
