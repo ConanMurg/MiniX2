@@ -38,7 +38,7 @@ void CConsoleHelper::SendMX2_HVandI(string stringHV, string stringI)
 	strCmd += strfn.Format("%0.1f;", dblHV);
 	strCmd += "CUSE=";
 	strCmd += strfn.Format("%0.1f;", dblI);
-	cout << strCmd << endl;
+	cout << "strCmd: " << strCmd << endl;
 
     SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
 }
