@@ -24,6 +24,7 @@ bool bRunSpectrumTest = false;			// run spectrum test
 bool bRunConfigurationTest = false;		// run configuration test
 bool bHaveStatusResponse = false;		// have status response
 bool bHaveConfigFromHW = false;			// have configuration from hardware
+bool bTubeOn = false;
 
 //extern "C" {
 // connect to default dpp
@@ -110,7 +111,6 @@ void ReadHVCfg()
 
 		cout << "\tRequesting HV and I Configuration..." << endl;
 		strCmd = "HVSE=?;CUSE=?;";
-    
     	chdpp.SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
 
 
@@ -133,31 +133,6 @@ void ReadHVCfg()
 }
 
 
-void TurnHVOn()
-{
-	cout << "\t\t\tTurning Tube On Now" << endl;
-	
-	string stringHV;
-	string stringI;
-
-	stringHV = "15.0";
-	stringI = "15.0";
-	
-	if (chdpp.LibUsb_isConnected) { // send and receive status
-
-		chdpp.SendMX2_HVandI(stringHV, stringI);
-
-		// if (chdpp.LibUsb_ReceiveData()) {
-		// 	cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
-			
-		// } else {
-		// 	cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
-		// }
-	} else {
-	cout << "Device not connected" << endl;
-	}
-}
-
 void Warmup()
 {
 	cout << "Running Daily Warmup" << endl;
@@ -170,10 +145,42 @@ void Warmup()
 }
 
 
-void TurnHVOff()
+void TurnHVOn()
 {
 	cout << "\t\t\tTurning Tube On Now" << endl;
 	
+	string stringHV;
+	string stringI;
+	
+
+	stringHV = "15.0";
+	stringI = "15.0";
+	
+	if (chdpp.LibUsb_isConnected) { // send and receive status
+
+		chdpp.SendMX2_HVandI(stringHV, stringI);
+		bTubeOn = true;
+		while (bTubeOn) {
+			ReadHVCfg;
+			Sleep(1000);
+		}
+
+		// if (chdpp.LibUsb_ReceiveData()) {
+		// 	cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
+			
+		// } else {
+		// 	cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
+		// }
+	} else {
+	cout << "Device not connected" << endl;
+	}
+}
+
+
+void TurnHVOff()
+{
+	cout << "\t\t\tTurning Tube On Now" << endl;
+	bTubeOn = false;
 	string stringHV;
 	string stringI;
 
@@ -194,6 +201,7 @@ void TurnHVOff()
 	cout << "Device not connected" << endl;
 	}
 }
+
 
 // void TurnHVOff()
 // {
