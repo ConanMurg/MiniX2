@@ -28,6 +28,9 @@ typedef enum _CommType {
 #define preqProcessCfgRead 0x200
 #define preqProcessNetFindRead 0x400
 #define preqProcessPaCal 0x800
+#define preqProcessFaultRecordMX2 0x808 // MINE
+#define preqProcessWarmupTableMX2 0x818 // MINE
+#define preqProcessTimestampRecordMX2 0x828 // MINE
 //...
 #define preqProcessSCAData 0x2000
 #define preqProcessAck 0x4000

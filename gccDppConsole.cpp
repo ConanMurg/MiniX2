@@ -56,15 +56,15 @@ void GetDppStatus()
 		if (chdpp.LibUsb_SendCommand(XMTPT_SEND_STATUS_MX2)) {	// request status
 			cout << "\t\tStatus sent." << endl;
 			cout << "\t\tReceiving status..." << endl;
-			if (chdpp.LibUsb_ReceiveData()) {
-				cout << "\t\t\tStatus received..." << endl;
-				cout << chdpp.DppStatusString << endl;
-				// bRunSpectrumTest = false; // set these back to true later on!! EDITS REQUIRED
-				// bHaveStatusResponse = false; // set to true
-				// bRunConfigurationTest = false; // set to true
-			} else {
-				cout << "\t\tError receiving status." << endl;
-			}
+			// if (chdpp.LibUsb_ReceiveData()) {
+			// 	cout << "\t\t\tStatus received..." << endl;
+			// 	cout << chdpp.DppStatusString << endl;
+			// 	// bRunSpectrumTest = false; // set these back to true later on!! EDITS REQUIRED
+			// 	// bHaveStatusResponse = false; // set to true
+			// 	// bRunConfigurationTest = false; // set to true
+			// } else {
+			// 	cout << "\t\tError receiving status." << endl;
+			// }
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}
@@ -83,100 +83,82 @@ void GetInterlockStatus()
 {
 	if (chdpp.LibUsb_isConnected) { // send and receive status
 		cout << endl;
-		cout << "\tRequesting Status..." << endl;
+		cout << "\tRequesting Interlock Status..." << endl;
 		if (chdpp.LibUsb_SendCommand(XMTPT_SEND_TUBE_ILOCK_TABLE_MX2)) {	// request status
 			cout << "\t\tInterlock Status sent." << endl;
 			cout << "\t\tReceiving Interlock Status..." << endl;
-			if (chdpp.LibUsb_ReceiveData()) {
-				cout << "\t\t\tInterlock Status received..." << endl;
-				cout << chdpp.strTubeInterlockTable << endl;
-				//cout << chdpp.DppStatusString << endl;
-			} else {
-				cout << "\t\tError receiving Interlock Status." << endl;
-			}
+			// if (chdpp.LibUsb_ReceiveData()) {
+			// 	cout << "\t\t\tInterlock Status received..." << endl;
+			// 	cout << chdpp.strTubeInterlockTable << endl;
+			// 	//cout << chdpp.DppStatusString << endl;
+			// } else {
+			// 	cout << "\t\tError receiving Interlock Status." << endl;
+			// }
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}
+	} else {
+		cout << "Device Not Connected" << endl;
 	}
 }
 
 
 void ReadHVCfg()
 {
-	cout << endl;
-	cout << "\tRequesting HV and I Configuration..." << endl;
-	// float sngHV;
-	// float sngI;
-	chdpp.ReadbackMX2_HVandI();
-	if (chdpp.LibUsb_ReceiveData()) {
-		cout << "\t\t\tReceiving Voltage and Current..." << endl;
-		cout << "\t\t\tVoltage: " << chdpp.strHV << endl;
-		cout << "\t\t\tCurrent: " << chdpp.strI << endl;
-		//cout << chdpp.DppStatusString << endl;
+	if (chdpp.LibUsb_isConnected) {
+		string strCmd;
+
+		cout << "\tRequesting HV and I Configuration..." << endl;
+		strCmd = "HVSE=?;CUSE=?;";
+    
+    	SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
+
+
+
+		// if (chdpp.LibUsb_SendCommand(XMTPT_SEND_TUBE_ILOCK_TABLE_MX2)) {
+
+		// 	chdpp.ReadbackMX2_HVandI();
+
+		// 	if (chdpp.LibUsb_ReceiveData()) {
+		// 		cout << "\t\t\tReceiving Voltage and Current..." << endl;
+		// 		cout << "\t\t\tVoltage: " << chdpp.strHV << endl;
+		// 		cout << "\t\t\tCurrent: " << chdpp.strI << endl;
+		// 	} else {
+		// 		cout << "\t\tError receiving Voltage and Current Status." << endl;
+		// 	}	
+		// }
 	} else {
-		cout << "\t\tError receiving Voltage and Current Status." << endl;
+		cout << "Device Not Connected" << endl;
 	}
 }
 
-
-// void ReadHVandI()
-// {
-// 	if (chdpp.LibUsb_isConnected) { // send and receive status
-// 		cout << endl;
-// 		cout << "\tRequesting HV and I..." << endl;
-// 		chdpp.ReadbackMX2_HVandI();
-// 		cout << "\t\tRequested." << endl;
-// 		if (chdpp.LibUsb_ReceiveData()) {
-// 			cout << "\t\t\tInterlock Status received..." << endl;
-// 			cout << "\t\t\t\tHighVoltage"<< chdpp.strHV << endl;
-// 			//cout << chdpp.DppStatusString << endl;
-// 		} else {
-// 			cout << "\t\tError receiving Interlock Status." << endl;
-// 		}
-// 	}
-// }
 
 void TurnHVOn()
 {
 	cout << "\t\t\tTurning Tube On Now" << endl;
-	//CMSecTimer tmr;
+	
 	string stringHV;
 	string stringI;
-	//string strStatus;
 
-	stringHV = "15";
-	stringI = "15";
+	stringHV = "15.0";
+	stringI = "15.0";
 	
-	//strStatus = FloatToString(sngHV,1) + "kV : " + FloatToString(sngI,1) + "uA";
 	if (chdpp.LibUsb_isConnected) { // send and receive status
+
 		chdpp.SendMX2_HVandI(stringHV, stringI);
-		if (chdpp.LibUsb_ReceiveData()) {
-			cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
+
+		// if (chdpp.LibUsb_ReceiveData()) {
+		// 	cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
 			
-		} else {
-			cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
-		}
-
-		//bValueChanged = chdpp.ReadbackMX2_HVandI(&sngHV, &sngI);
-
-		// m_pParentMX2->SendMX2_HVandI(strHV, strI);
-		// tmr.msTimer(100);
-		// bValueChanged = m_pParentMX2->ReadbackMX2_HVandI(&sngHV, &sngI);
-
-		// strStatus = FloatToString(sngHV,1) + "kV : " + FloatToString(sngI,1) + "uA";
-		// strStatus = FloatToString(sngHV, 1) + "kV" + " : " + FloatToString(sngI, 1) + "uA";
-		// if (bValueChanged) {
-		//     strHV = FloatToString(sngHV, 1);
-		// 	DisplayDouble(IDC_SETHIGHVOLTAGECONTROLEDIT, sngHV, 1);
-		//     strI = FloatToString(sngI, 1);
-		// 	DisplayDouble(IDC_SETCURRENTCONTROLEDIT, sngI, 1);
+		// } else {
+		// 	cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
 		// }
 	} else {
-		cout << "Device not connected" << endl;
+	cout << "Device not connected" << endl;
 	}
 }
 
-void warmup()
+void Warmup()
 {
 	cout << "Running Daily Warmup" << endl;
 	chdpp.DailyWarmup();
@@ -190,27 +172,52 @@ void warmup()
 
 void TurnHVOff()
 {
-	cout << "\t\t\tTurning Tube Off Now" << endl;
-	float sngHV;
-	float sngI;
+	cout << "\t\t\tTurning Tube On Now" << endl;
+	
 	string stringHV;
 	string stringI;
-	bool bValueChanged;
 
-	sngHV = 0.0;
-	sngI = 0.0;
 	stringHV = "0.0";
 	stringI = "0.0";
+	
 	if (chdpp.LibUsb_isConnected) { // send and receive status
+
 		chdpp.SendMX2_HVandI(stringHV, stringI);
 
-		if (chdpp.LibUsb_ReceiveData()) {
-			cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
-		} else {
-			cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
-		}
+		// if (chdpp.LibUsb_ReceiveData()) {
+		// 	cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
+			
+		// } else {
+		// 	cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
+		// }
+	} else {
+	cout << "Device not connected" << endl;
 	}
 }
+
+// void TurnHVOff()
+// {
+// 	cout << "\t\t\tTurning Tube Off Now" << endl;
+// 	float sngHV;
+// 	float sngI;
+// 	string stringHV;
+// 	string stringI;
+// 	bool bValueChanged;
+
+// 	sngHV = 0.0;
+// 	sngI = 0.0;
+// 	stringHV = "0.0";
+// 	stringI = "0.0";
+// 	if (chdpp.LibUsb_isConnected) { // send and receive status
+// 		chdpp.SendMX2_HVandI(stringHV, stringI);
+
+// 		if (chdpp.LibUsb_ReceiveData()) {
+// 			cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
+// 		} else {
+// 			cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
+// 		}
+// 	}
+// }
 
 
 // void TurnHVOffOld()
@@ -543,12 +550,13 @@ int main(int argc, char* argv[])
 	// ReadHVCfg();
 	// cout << "Press the Enter Key to continue . . .";
 	// _getch();
+
+
+
 	int userInput;
 
-
-
 	while (true) {
-		cout << "1 - Status, 2 - TurnHVOff, 3 - TurnHVOn, 4 - Disconnect USB, 5 - Daily Warmup" << endl;
+		cout << "1 - Status, 2 - TurnHVOff, 3 - TurnHVOn, 4 - Disconnect USB, 5 - Daily Warmup, 6 - Read Voltage and Current" << endl;
 		cin >> userInput;
 
 		if (userInput == 0) {
@@ -570,7 +578,10 @@ int main(int argc, char* argv[])
 				return 0;
 				break;
 			case 5:
-				warmup();
+				Warmup();
+				break;
+			case 6:
+				ReadHVCfg();
 				break;
 			default:
 				cout << "Invalid Input" << endl;
@@ -578,44 +589,47 @@ int main(int argc, char* argv[])
 	}
 
 
-	bool bReadHVCfg;
-	bReadHVCfg = false;
+	// bool bReadHVCfg;
+	// bReadHVCfg = false;
 
-	if (bReadHVCfg) 
-	{
-		/// Turn the tube on to 15 kV and 15 uA
-		TurnHVOn();
-		cout << "Press the Enter key to continue . . .";
-		_getch();
+	// if (bReadHVCfg) 
+	// {
+	// 	/// Turn the tube on to 15 kV and 15 uA
+	// 	TurnHVOn();
+	// 	cout << "Press the Enter key to continue . . .";
+	// 	_getch();
 
-		GetDppStatus();
-		cout << "Press the Enter key to continue . . .";
-		_getch();
+	// 	GetDppStatus();
+	// 	cout << "Press the Enter key to continue . . .";
+	// 	_getch();
 		
 
-		// ReadHVCfg();
-		// cout << "Press the Enter Key to continue . . .";
-		// _getch();
+	// 	// ReadHVCfg();
+	// 	// cout << "Press the Enter Key to continue . . .";
+	// 	// _getch();
 
 
-		/// Turn the tube off (set to 0 kV and 0 uA)
-		TurnHVOff();
-		cout << "Press the Enter key to continue . . .";
-		_getch();
+	// 	/// Turn the tube off (set to 0 kV and 0 uA)
+	// 	TurnHVOff();
+	// 	cout << "Press the Enter key to continue . . .";
+	// 	_getch();
 
 
 
-		GetDppStatus();
-		cout << "Press the Enter key to continue . . .";
-		_getch();
+	// 	GetDppStatus();
+	// 	cout << "Press the Enter key to continue . . .";
+	// 	_getch();
 
 		
 
-		// ReadHVCfg();
-		// cout << "Press the Enter Key to continue . . .";
-		// _getch();
-	}
+	// 	// ReadHVCfg();
+	// 	// cout << "Press the Enter Key to continue . . .";
+	// 	// _getch();
+	// }
 	
+
+
+
 
 	//////	system("cls");
 	//////	SendConfigFileToDpp("PX5_Console_Test.txt");    // calls SendCommandString

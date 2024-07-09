@@ -154,6 +154,19 @@ long CParsePacket::ParsePacket(unsigned char P[], Packet_In *PIN)
             //ParsePkt = preqProcessNetFindRead;
         } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_OPTION_PA_CALIBRATION)) {
             ParsePkt = preqProcessPaCal;
+//---------------------------------------------------------------------------------- Start Mini-X2
+        } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_MX2_TUBE_ILOCK_TABLE)) {
+            ParsePkt = preqProcessTubeInterlockTableMX2;
+           
+        } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_MX2_WARMUP_TABLE)) {
+            ParsePkt = preqProcessWarmupTableMX2;
+            
+        } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_MX2_TIMESTAMP_RECORD)) {
+            ParsePkt = preqProcessTimestampRecordMX2;
+            
+        } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_MX2_FAULT_RECORD)) {
+            ParsePkt = preqProcessFaultRecordMX2;
+//---------------------------------------------------------------------------------- End Mini-X2
         } else if (PIN->PID1 == PID1_ACK) {
             ParsePkt = preqProcessAck;
             // cout << "Pin1: " << PIN->PID1 << "  Pin2: " << PIN->PID2 << endl;

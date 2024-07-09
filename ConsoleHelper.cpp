@@ -50,40 +50,9 @@ void CConsoleHelper::DailyWarmup()
 
 void CConsoleHelper::ReadbackMX2_HVandI()
 {
-    //CMSecTimer tmr;
     string strCmd;
-//    bool bCfgCmdDone;
-    
-    float sngHV_In;
-    float sngI_In;
-    bool bReadbackMX2_HVandI;
-	float fltTemp;
-//    
-    bReadbackMX2_HVandI = false;
     strCmd = "HVSE=?;CUSE=?;";
-    // MiniX2.strMX2CfgIn = "";
-    // MiniX2.bMX2CfgReady = false;
-    SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
-    // //tmr.msTimer(100);
-    // //strStatus = "bMX2CfgReady: " + CStr(bMX2CfgReady)
-    // if (MiniX2.bMX2CfgReady) {                      //1. get decoded message values
-    //     strHV = GetCmdData("HVSE", MiniX2.strMX2CfgIn);
-    //     strI = GetCmdData("CUSE", MiniX2.strMX2CfgIn);
-    // }
-    // sngHV_In = *sngHV;
-    // sngI_In = *sngI;                             //2. compare to input values
-	// fltTemp = StringToFloat(strHV);
-    // if (sngHV_In != fltTemp) {      //3. if different set flag and replace values
-    //     bReadbackMX2_HVandI = true;
-    //     *sngHV = fltTemp;
-    // }
-	// fltTemp = StringToFloat(strI);
-    // if (sngI_In != fltTemp) {
-    //     bReadbackMX2_HVandI = true;
-    //     *sngI = fltTemp;
-    // }
-	// return(bReadbackMX2_HVandI);
-	//return(true);
+	SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
 }
 
 
@@ -112,21 +81,19 @@ void CConsoleHelper::SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[]
 {
     bool bHaveBuffer;
 	int bSentPkt;
-	bool bMessageSent;
-
+	
     bHaveBuffer = (bool) SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XmtCmd, DataOut);
     if (bHaveBuffer) {
-		cout << "bhavebuffer: " << bHaveBuffer << endl;
+		// cout << "bhavebuffer: " << bHaveBuffer << endl;
 		bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
         if (bSentPkt) {
-			bMessageSent = true;
+			cout << "\t\t\tBufferOUT: " << DP5Proto.BufferOUT << endl;
 			RemCallParsePacket(DP5Proto.PacketIn);
 		}  else {
-			cout << "bSentPkt is false - failed to turn tube on" << endl;
-		//     MiniX2.STATUS_MNX.bUSBError = true;
+			cout << "SendCommandData in ConsoleHelper.cpp  - bSentPkt is false" << endl;
         }
     } else {
-		cout << "Does not have buffer" << endl;
+		cout << "SendCommandData in ConsoleHelper.cpp - Does not have buffer" << endl;
 	}
 }
 
@@ -139,51 +106,78 @@ void CConsoleHelper::RemCallParsePacket(BYTE PacketIn[])
 
 void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 {
-    switch (DppState.ReqProcess) {
-//        case preqProcessStatus:
-//			MiniX2.isMiniX2 = false;
-//            ProcessStatusEx(PIN, DppState);
-//            break;
-        // case preqProcessStatusMX2:
-		// 	// MiniX2.isMiniX2 = true;
-        //     // ProcessStatusExMX2(PIN, DppState);
-        //     break;
-        // case preqProcessTextData:
-        //     ProcessTextDataEx(PIN, DppState);
-        //     break;
-        // case preqProcessCfgRead:
-        //     ProcessCfgReadM2Ex(PIN, DppState);
-        //     break;
-///====================================================================
-//       Process Mini-X2 Receive Packets
-//====================================================================
-        // case preqProcessTubeInterlockTableMX2:
-        //     ProcessTubeInterlockTableMX2Ex(PIN, DppState);
-        //     break;
-        // case preqProcessWarmupTableMX2:
-        //     ProcessWarmupTableMX2Ex(PIN, DppState);
-        //     break;
-        // case preqProcessTimestampRecordMX2:
-        //     // ProcessTimestampRecordMX2Ex(PIN, DppState);
-        //     break;
-        // case preqProcessFaultRecordMX2:
-        //     // ProcessFaultRecordMX2Ex(PIN, DppState);
-        //     break;
-        case preqProcessAck:
-			cout << "ProcessAck" << endl;
+	switch (DppState.ReqProcess) {
+		case preqProcessStatus:
+			cout << "RemCallParsePkt: ProcessStatus" << endl;
+			long idxStatus;
+			for(idxStatus=0;idxStatus<64;idxStatus++) {
+				DP5Stat.m_DP5_Status.RAW[idxStatus] = DP5Proto.PIN.DATA[idxStatus];
+			}
+			DP5Stat.Process_Status(&DP5Stat.m_DP5_Status);
+			//DP5Stat.Process_MNX_Status(&DP5Stat.STATUS_MNX);
+			DppStatusString = DP5Stat.ShowStatusValueStrings(DP5Stat.m_DP5_Status);
+			//DppStatusString = DP5Stat.MiniX2_StatusToString(DP5Stat.STATUS_MNX);
+			break;
+		case preqProcessStatusMX2:
+			cout << "RemCallParsePkt: ProcessStatusMX2" << endl;
+			for(idxStatus=0;idxStatus<64;idxStatus++) {
+				DP5Stat.STATUS_MNX.RAW[idxStatus] = DP5Proto.PIN.DATA[idxStatus];
+			}
+			//DP5Stat.Process_Status(&DP5Stat.m_DP5_Status);
+			DP5Stat.Process_MNX_Status(&DP5Stat.STATUS_MNX);
+			//DppStatusString = DP5Stat.ShowStatusValueStrings(DP5Stat.m_DP5_Status);
+			DppStatusString = DP5Stat.MiniX2_StatusToString(DP5Stat.STATUS_MNX);
+			break;
+		case preqProcessSpectrum:
+		cout << "RemCallParsePkt: ProcessSpectrum" << endl;	
+			ProcessSpectrumEx(DP5Proto.PIN, ParsePkt.DppState);
+			break;
+		//case preqProcessScopeData:
+		//	ProcessScopeDataEx(DP5Proto.PIN, ParsePkt.DppState);
+		//	break;
+		case preqProcessTextData:
+			cout << "RemCallParsePkt: ProcessTextData" << endl;
+			ProcessTextDataEx(DP5Proto.PIN, ParsePkt.DppState);
+			break;
+		//case preqProcessDiagData:
+		//	ProcessDiagDataEx(DP5Proto.PIN, ParsePkt.DppState);
+		//	break;
+		case preqProcessCfgRead:
+			cout << "RemCallParsePkt: ProcessCfgRead" << endl;
+			ProcessCfgReadM2Ex(DP5Proto.PIN, ParsePkt.DppState);
+			//cout << "ProcessCgfReadM2Ex" << endl;
+			break;
+		case preqProcessTubeInterlockTableMX2:
+			cout << "RemCallParsePkt: ProcessTubeInterlockTable" << endl;
+			ProcessTubeInterlockTableMX2Ex(DP5Proto.PIN, ParsePkt.DppState);
+			break;
+		case preqProcessWarmupTableMX2:
+			cout << "RemCallParsePkt: ProcessWarmupTable" << endl;
+			ProcessWarmupTableMX2Ex(PIN, DppState);
+			break;
+		case preqProcessTimestampRecordMX2:
+			cout << "RemCallParsePkt: ProcessTimestampRecord" << endl;
+			ProcessTimestampRecordMX2Ex(PIN, DppState);
+			break;
+		case preqProcessFaultRecordMX2:
+			cout << "RemCallParsePkt: ProcessFaultRecord" << endl;
+			ProcessFaultRecordMX2Ex(PIN, DppState);
+			break;
+		case preqProcessAck:
+			cout << "RemCallParsePkt: ProcessAck" << endl;
 			cout << ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2) << endl;
-            // ProcessAck(PIN.PID2);
-            break;
-			
-//        case preqProcessError:
-//            DisplayError(PIN, DppState);
-//            break;
-        default:
-            //do nothing
-			cout << "Default" << endl;
-            break;
-    }
+			break;
+		case preqProcessError:
+			cout << "RemCallParsePkt: preqProcessError" << endl;
+			break;
+			//	DisplayError(DP5Proto.PIN, ParsePkt.DppState);
+			//	break;
+		default:
+			break;
+	}
 }
+
+
 
 
 
@@ -240,6 +234,7 @@ bool CConsoleHelper::LibUsb_SendCommand(TRANSMIT_PACKET_TYPE XmtCmd)
 		if (bHaveBuffer) {
 			bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
 			if (bSentPkt) {
+				RemCallParsePacket(DP5Proto.PacketIn);
 	            bMessageSent = true;
 			}
 		}
@@ -292,16 +287,14 @@ bool CConsoleHelper::LibUsb_SendCommand_Config(TRANSMIT_PACKET_TYPE XmtCmd, CONF
 {
     bool bHaveBuffer;
     int bSentPkt;
-	bool bMessageSent;
-
-	bMessageSent = false;
+	
 	if (DppLibUsb.bDeviceConnected) {
 		memset(&DP5Proto.BufferOUT[0],0,sizeof(DP5Proto.BufferOUT));
 		bHaveBuffer = (bool) SndCmd.DP5_CMD_Config(DP5Proto.BufferOUT, XmtCmd, CfgOptions);
 		if (bHaveBuffer) {
 			bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
 			if (bSentPkt) {
-	            bMessageSent = true;
+	            RemCallParsePacket(DP5Proto.PacketIn)
 			}
 		}
 	}
@@ -352,6 +345,7 @@ bool CConsoleHelper::ReceiveData()
 			DP5Stat.Process_MNX_Status(&DP5Stat.STATUS_MNX);
 			//DppStatusString = DP5Stat.ShowStatusValueStrings(DP5Stat.m_DP5_Status);
 			DppStatusString = DP5Stat.MiniX2_StatusToString(DP5Stat.STATUS_MNX);
+			cout << DppStatusString <<endl;
 			break;
 		case preqProcessSpectrum:
 			ProcessSpectrumEx(DP5Proto.PIN, ParsePkt.DppState);
@@ -418,10 +412,10 @@ void CConsoleHelper::ProcessTubeInterlockTableMX2Ex(Packet_In PIN, DppStateType 
 	string strStatus("");
 	string strTubeType("");
     strTubeInterlockTable = DP5Stat.Process_MNX_Tube_Table(PIN, &DP5Stat.TubeInterlockTable);
-	cout << strTubeInterlockTable << endl;
-    
+	    
     DP5Stat.strMX2AdvancedDisplay = DP5Stat.Process_MNX_Tube_Table(PIN, &DP5Stat.TubeInterlockTable);
 	// The Tube and Interlock Table is needed to setup the graphics and parameter constraints
+	cout << strTubeInterlockTable << endl;
 
     if (DP5Stat.bHaveTubeType) {
         strStatus = "Tube and Interlock Table Received\r\n";
@@ -473,8 +467,8 @@ void CConsoleHelper::ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState)
 	stringex strfn;
 	string strMX2CfgIn;
 	string strCh;
-	string strHV("");
-	string strI("");
+	// string strHV("");
+	// string strI("");
 
 	bool bMX2CfgReady;
 
@@ -489,14 +483,13 @@ void CConsoleHelper::ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState)
 	if (strRawCfgIn.length() > 0) {
 		strMX2CfgIn = strRawCfgIn;
 		bMX2CfgReady = true;
+		strHV = GetCmdData("HVSE", strMX2CfgIn);
+		cout << "Voltage: " << strHV << endl;
+		strI = GetCmdData("CUSE", strMX2CfgIn);
+		cout << "Current: " << strI << endl;
 	}
-	
-	strHV = GetCmdData("HVSE", strMX2CfgIn);
-	cout << "Voltage: " << strHV << endl;
-    strI = GetCmdData("CUSE", strMX2CfgIn);
-	cout << "Current: " << strI << endl;
-
 }
+
 
 void CConsoleHelper::ProcessCfgReadEx(Packet_In PIN, DppStateType DppState)
 {
