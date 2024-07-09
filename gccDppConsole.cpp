@@ -60,15 +60,6 @@ void GetDppStatus()
 		if (chdpp.LibUsb_SendCommand(XMTPT_SEND_STATUS_MX2)) {	// request status
 			cout << "\t\tStatus sent." << endl;
 			cout << "\t\tReceiving status..." << endl;
-			// if (chdpp.LibUsb_ReceiveData()) {
-			// 	cout << "\t\t\tStatus received..." << endl;
-			// 	cout << chdpp.DppStatusString << endl;
-			// 	// bRunSpectrumTest = false; // set these back to true later on!! EDITS REQUIRED
-			// 	// bHaveStatusResponse = false; // set to true
-			// 	// bRunConfigurationTest = false; // set to true
-			// } else {
-			// 	cout << "\t\tError receiving status." << endl;
-			// }
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}
@@ -91,13 +82,6 @@ void GetInterlockStatus()
 		if (chdpp.LibUsb_SendCommand(XMTPT_SEND_TUBE_ILOCK_TABLE_MX2)) {	// request status
 			cout << "\t\tInterlock Status sent." << endl;
 			cout << "\t\tReceiving Interlock Status..." << endl;
-			// if (chdpp.LibUsb_ReceiveData()) {
-			// 	cout << "\t\t\tInterlock Status received..." << endl;
-			// 	cout << chdpp.strTubeInterlockTable << endl;
-			// 	//cout << chdpp.DppStatusString << endl;
-			// } else {
-			// 	cout << "\t\tError receiving Interlock Status." << endl;
-			// }
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}

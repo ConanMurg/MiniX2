@@ -299,7 +299,7 @@ bool CSendCommand::DP5_CMD(unsigned char Buffer[], TRANSMIT_PACKET_TYPE XmtCmd)
 		case XMTPT_KEEP_ALIVE_LOCK:
 			POUT.PID1 = PID1_VENDOR_REQ;
 			POUT.PID2 = PID2_ETHERNET_LOCK_IP;
-			POUT.LEN=1;
+			POUT.LEN=0;
 			break;	
 		default:
             bCmdFound = false;

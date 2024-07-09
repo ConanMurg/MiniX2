@@ -25,7 +25,12 @@ CConsoleHelper::~CConsoleHelper(void)
 
 void CConsoleHelper::KeepMX2_Alive()
 {
-	LibUsb_SendCommand(XMTPT_KEEP_ALIVE_SHARING);
+	if (LibUsb_SendCommand(XMTPT_KEEP_ALIVE_LOCK))
+	{
+		cout << "Keep Alive Lock Sent" << endl;
+	} else {
+		cout << "Failed to send Alive Lock" << endl;
+	}
 }
 
 void CConsoleHelper::SendMX2_Volume(string strVol)
