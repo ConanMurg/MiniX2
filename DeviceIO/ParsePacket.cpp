@@ -12,6 +12,9 @@ void CParsePacket::ParsePacketStatus(unsigned char P[], Packet_In *PIN)
 {
     short X;
     long CSum;
+    // for (int i = 0; i < PIN->LEN + 8 ; ++i) {
+    //     cout << std::hex << std::setfill('0') << 
+    // }
 
     CSum = 0;
     if (P[0] == SYNC1_) {

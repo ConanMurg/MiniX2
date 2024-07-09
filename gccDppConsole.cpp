@@ -26,6 +26,8 @@ bool bHaveStatusResponse = false;		// have status response
 bool bHaveConfigFromHW = false;			// have configuration from hardware
 bool bTubeOn = false;
 
+
+
 //extern "C" {
 // connect to default dpp
 //		CConsoleHelper::LibUsb_Connect_Default_DPP	// LibUsb connect to default DPP
@@ -33,6 +35,7 @@ void ConnectToDefaultDPP()
 {
 	cout << endl;
 	cout << "Running DPP LibUsb tests from console..." << endl;
+	// chdpp.ListDevices();
 	cout << endl;
 	cout << "\tConnecting to default LibUsb device..." << endl;
 	if (chdpp.LibUsb_Connect_Default_DPP()) {
@@ -112,6 +115,9 @@ void ReadHVCfg()
 		cout << "\tRequesting HV and I Configuration..." << endl;
 		strCmd = "HVSE=?;CUSE=?;";
     	chdpp.SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
+		//Sleep(1000);
+		//cout << "\t\t\tkV: " << chdpp.strHV << endl;
+		//cout << "\t\t\tuA: " << chdpp.strI << endl;
 
 
 
@@ -132,17 +138,11 @@ void ReadHVCfg()
 	}
 }
 
-
-void Warmup()
+void KeepAlive()
 {
-	cout << "Running Daily Warmup" << endl;
-	chdpp.DailyWarmup();
-	if (chdpp.LibUsb_ReceiveData()) {
-		cout << "\t\t\tStatus received..." << endl;
-		} else {
-		cout << "\t\tError starting warmup." << endl;
-		}
+	chdpp.KeepMX2_Alive();
 }
+
 
 
 void TurnHVOn()
@@ -151,19 +151,25 @@ void TurnHVOn()
 	
 	string stringHV;
 	string stringI;
-	
 
-	stringHV = "15.0";
-	stringI = "15.0";
+	stringHV = "5";
+	stringI = "5";
 	
 	if (chdpp.LibUsb_isConnected) { // send and receive status
 
 		chdpp.SendMX2_HVandI(stringHV, stringI);
+		ReadHVCfg();
 		bTubeOn = true;
-		while (bTubeOn) {
-			ReadHVCfg;
-			Sleep(1000);
+		for (int i = 0; i < 20; ++i)
+		{	
+			cout << i << endl;
+			//chdpp.SendMX2_HVandI(stringHV, stringI);
+			// Sleep(500);
+			// KeepAlive();
+			ReadHVCfg();
+			Sleep(500);
 		}
+		
 
 		// if (chdpp.LibUsb_ReceiveData()) {
 		// 	cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
@@ -171,6 +177,41 @@ void TurnHVOn()
 		// } else {
 		// 	cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
 		// }
+	} else {
+	cout << "Device not connected" << endl;
+	}
+}
+
+
+
+void TurnVolumeOn()
+{
+	cout << "\t\t\tTurning Volume OFF Now" << endl;
+	string strVol;
+
+	strVol= "ON";
+	
+	if (chdpp.LibUsb_isConnected) { // send and receive status
+
+		chdpp.SendMX2_Volume(strVol);
+
+	} else {
+	cout << "Device not connected" << endl;
+	}
+}
+
+
+void TurnVolumeOff()
+{
+	cout << "\t\t\tTurning Volume OFF Now" << endl;
+	string strVol;
+
+	strVol= "OFF";
+	
+	if (chdpp.LibUsb_isConnected) { // send and receive status
+
+		chdpp.SendMX2_Volume(strVol);
+
 	} else {
 	cout << "Device not connected" << endl;
 	}
@@ -179,29 +220,39 @@ void TurnHVOn()
 
 void TurnHVOff()
 {
-	cout << "\t\t\tTurning Tube On Now" << endl;
+	cout << "\t\t\tTurning Tube OFF Now" << endl;
 	bTubeOn = false;
 	string stringHV;
 	string stringI;
 
-	stringHV = "0.0";
-	stringI = "0.0";
+	stringHV = "0";
+	stringI = "0";
 	
 	if (chdpp.LibUsb_isConnected) { // send and receive status
 
 		chdpp.SendMX2_HVandI(stringHV, stringI);
 
-		// if (chdpp.LibUsb_ReceiveData()) {
-		// 	cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
-			
-		// } else {
-		// 	cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
-		// }
 	} else {
 	cout << "Device not connected" << endl;
 	}
 }
 
+void Warmup()
+{
+	cout << "Running Daily Warmup" << endl;
+	if (chdpp.LibUsb_isConnected) {
+		chdpp.DailyWarmup();
+		bTubeOn = true;
+		for (int i = 0; i < 30; ++i)
+		{
+			ReadHVCfg;
+			Sleep(1000);
+		}
+		TurnHVOff();
+	} else {
+		cout << "Device Not Connected" << endl;
+	}
+}
 
 // void TurnHVOff()
 // {
@@ -537,6 +588,7 @@ int main(int argc, char* argv[])
 {
 	//system(CLEAR_TERM);
 	ConnectToDefaultDPP();
+	// KeepAlive();
 	cout << "Press the Enter key to continue . . .";
 	_getch();
 
@@ -545,12 +597,15 @@ int main(int argc, char* argv[])
 	//system(CLEAR_TERM);
 	chdpp.DP5Stat.m_DP5_Status.SerialNumber = 0;
 	GetDppStatus();
+	// KeepAlive();
 	cout << "Press the Enter key to continue . . .";
 	_getch();
 
 	if (chdpp.DP5Stat.STATUS_MNX.SN == 0) { return 1; }
 
 	GetInterlockStatus();
+	// KeepAlive();
+
 	cout << "Press the Enter key to continue . . .";
 	_getch();
 
@@ -558,20 +613,40 @@ int main(int argc, char* argv[])
 	// ReadHVCfg();
 	// cout << "Press the Enter Key to continue . . .";
 	// _getch();
-
+	cout << "0 - Help" << endl;
+	cout << "1 - Status" << endl;
+	cout << "2 - TurnHVOff" << endl;
+	cout << "3 - TurnHVOn" << endl;
+	cout << "4 - DailyWarmup" << endl;
+	cout << "5 - Read kV and uA" << endl;
+	cout << "6 - Set Volume OFF" << endl;
+	cout << "7 - Set Volume On" << endl;
+	cout << "9 - Disconnect" << endl;
 
 
 	int userInput;
 
 	while (true) {
-		cout << "1 - Status, 2 - TurnHVOff, 3 - TurnHVOn, 4 - Disconnect USB, 5 - Daily Warmup, 6 - Read Voltage and Current" << endl;
+		
+
 		cin >> userInput;
 
-		if (userInput == 0) {
+		if (userInput == 9) {
 			break;
 		}
 
 		switch (userInput) {
+			case 0:
+				cout << "0 - Help" << endl;
+				cout << "1 - Status" << endl;
+				cout << "2 - TurnHVOff" << endl;
+				cout << "3 - TurnHVOn" << endl;
+				cout << "4 - DailyWarmup" << endl;
+				cout << "5 - Read kV and uA" << endl;
+				cout << "6 - Set Volume OFF" << endl;
+				cout << "7 - Set Volume On" << endl;
+				cout << "9 - Disconnect" << endl;
+				break;
 			case 1:
 				GetDppStatus();
 				break;
@@ -582,60 +657,21 @@ int main(int argc, char* argv[])
 				TurnHVOn();
 				break;
 			case 4:
-				CloseConnection();
-				return 0;
-				break;
-			case 5:
 				Warmup();
 				break;
-			case 6:
+			case 5:
 				ReadHVCfg();
+				break;
+			case 6:
+				TurnVolumeOff();
+				break;
+			case 7:
+				TurnVolumeOn();
 				break;
 			default:
 				cout << "Invalid Input" << endl;
 		}
 	}
-
-
-	// bool bReadHVCfg;
-	// bReadHVCfg = false;
-
-	// if (bReadHVCfg) 
-	// {
-	// 	/// Turn the tube on to 15 kV and 15 uA
-	// 	TurnHVOn();
-	// 	cout << "Press the Enter key to continue . . .";
-	// 	_getch();
-
-	// 	GetDppStatus();
-	// 	cout << "Press the Enter key to continue . . .";
-	// 	_getch();
-		
-
-	// 	// ReadHVCfg();
-	// 	// cout << "Press the Enter Key to continue . . .";
-	// 	// _getch();
-
-
-	// 	/// Turn the tube off (set to 0 kV and 0 uA)
-	// 	TurnHVOff();
-	// 	cout << "Press the Enter key to continue . . .";
-	// 	_getch();
-
-
-
-	// 	GetDppStatus();
-	// 	cout << "Press the Enter key to continue . . .";
-	// 	_getch();
-
-		
-
-	// 	// ReadHVCfg();
-	// 	// cout << "Press the Enter Key to continue . . .";
-	// 	// _getch();
-	// }
-	
-
 
 
 
@@ -678,7 +714,7 @@ int main(int argc, char* argv[])
 
 	//system(CLEAR_TERM);
 	CloseConnection();
-	cout << "Press the Enter key to continue . . .";
+	cout << "Press the Enter key to continue . . ." << endl;
 	_getch(); 
 
 	return 0;

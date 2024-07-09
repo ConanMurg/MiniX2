@@ -23,6 +23,21 @@ CConsoleHelper::~CConsoleHelper(void)
 {
 }
 
+void CConsoleHelper::KeepMX2_Alive()
+{
+	LibUsb_SendCommand(XMTPT_KEEP_ALIVE_SHARING);
+}
+
+void CConsoleHelper::SendMX2_Volume(string strVol)
+{
+    string strCmd;
+	strCmd = "VOLU=";
+	strCmd += strVol;
+	strCmd += ";";
+	cout << "strCmd: " << strCmd << endl;
+
+    SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
+}
 
 void CConsoleHelper::SendMX2_HVandI(string stringHV, string stringI)
 {
@@ -102,6 +117,7 @@ void CConsoleHelper::RemCallParsePacket(BYTE PacketIn[])
 {
     ParsePkt.DppState.ReqProcess = ParsePkt.ParsePacket(PacketIn, &DP5Proto.PIN);
     ParsePacketEx(DP5Proto.PIN, ParsePkt.DppState);
+	cout << "received: " << endl;
 }
 
 void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
@@ -207,6 +223,10 @@ string CConsoleHelper::Process_MNX_Fault_Record(Packet_In PIN)
 	return(strFault);
 }
 
+void CConsoleHelper::ListDevices()
+{
+	DppLibUsb.PrintDevices();
+}
 
 bool CConsoleHelper::LibUsb_Connect_Default_DPP()
 {
@@ -493,7 +513,6 @@ void CConsoleHelper::ClearConfigReadFormatFlags()
 void CConsoleHelper::ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState)
 {
 	string strRawCfgIn;
-	string strRawCfgOut;
 	stringex strfn;
 	string strMX2CfgIn;
 	string strCh;
@@ -501,15 +520,16 @@ void CConsoleHelper::ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState)
 	// string strI("");
 
 	bool bMX2CfgReady;
-
-	strRawCfgOut = "";
-	// ==========================================================
-	// ===== Create Raw Configuration Buffer From Hardware ======
-	for (int idxCfg=0; idxCfg < PIN.LEN; idxCfg++) {
-		strCh = strfn.Format("%c",PIN.DATA[idxCfg]);
+	for (int idxCfg = 0; idxCfg < PIN.LEN; idxCfg++) {
+		strCh = strfn.Format("%c", PIN.DATA[idxCfg]);
 		strRawCfgIn += strCh;
 	}
-	cout << "Raw Config: " << strRawCfgIn << endl;
+
+	
+	// ==========================================================
+	// ===== Create Raw Configuration Buffer From Hardware ======
+	
+	// cout << "Raw Config: " << strRawCfgIn << endl;
 	if (strRawCfgIn.length() > 0) {
 		strMX2CfgIn = strRawCfgIn;
 		bMX2CfgReady = true;

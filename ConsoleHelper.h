@@ -41,6 +41,9 @@ public:
 	bool LibUsb_isConnected;
 	/// LibUsb number of devices found.
 	int  LibUsb_NumDevices;
+	void KeepMX2_Alive();
+	//Turn Volume on/off
+	void SendMX2_Volume(string strVol);
 	/// Turn HV on / off
 	void SendMX2_HVandI(string stringHV, string stringI);
 	//
@@ -65,6 +68,8 @@ public:
 	void ProcessFaultRecordMX2Ex(Packet_In PIN, DppStateType DppState);
 	//
 	string Process_MNX_Fault_Record(Packet_In PIN);
+	//
+	void ListDevices();
 	/// LibUsb connect to the default DPP.
 	bool LibUsb_Connect_Default_DPP();
 	/// LibUsb close the current connection.

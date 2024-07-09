@@ -286,6 +286,21 @@ bool CSendCommand::DP5_CMD(unsigned char Buffer[], TRANSMIT_PACKET_TYPE XmtCmd)
             POUT.LEN = 1;
             POUT.DATA[0] = 1;                            // monthly warm-up
 			break;
+		case XMTPT_KEEP_ALIVE_SHARING:
+			POUT.PID1 = PID1_VENDOR_REQ;
+			POUT.PID2 = PID2_ETHERNET_ALLOW_SHAREING;
+			POUT.LEN=0;
+			break;
+		case XMTPT_KEEP_ALIVE_NO_SHARING:
+			POUT.PID1 = PID1_VENDOR_REQ;
+			POUT.PID2 = PID2_ETHERNET_NO_SHARING;
+			POUT.LEN=0;
+			break;
+		case XMTPT_KEEP_ALIVE_LOCK:
+			POUT.PID1 = PID1_VENDOR_REQ;
+			POUT.PID2 = PID2_ETHERNET_LOCK_IP;
+			POUT.LEN=1;
+			break;	
 		default:
             bCmdFound = false;
 			break;
