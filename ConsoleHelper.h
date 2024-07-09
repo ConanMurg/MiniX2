@@ -43,6 +43,8 @@ public:
 	int  LibUsb_NumDevices;
 	/// Turn HV on / off
 	void SendMX2_HVandI(string stringHV, string stringI);
+	//
+	void DailyWarmup();
 	/// Find HV and I configuration
 	void ReadbackMX2_HVandI();
 	/// Send Command
@@ -53,7 +55,16 @@ public:
 	void RemCallParsePacket(BYTE PacketIn[]);
 	//
 	void ParsePacketEx(Packet_In PIN, DppStateType DppState);
-	
+	//
+	void ProcessTimestampRecordMX2Ex(Packet_In PIN, DppStateType DppState);
+	//
+	void ProcessWarmupTableMX2Ex(Packet_In PIN, DppStateType DppState);
+	//
+	string Process_MNX_Warmup_Table();
+	//
+	void ProcessFaultRecordMX2Ex(Packet_In PIN, DppStateType DppState);
+	//
+	string Process_MNX_Fault_Record(Packet_In PIN);
 	/// LibUsb connect to the default DPP.
 	bool LibUsb_Connect_Default_DPP();
 	/// LibUsb close the current connection.

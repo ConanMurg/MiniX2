@@ -45,7 +45,7 @@ void CConsoleHelper::SendMX2_HVandI(string stringHV, string stringI)
 
 void CConsoleHelper::DailyWarmup()
 {
-	LibUsb_SendCommand(PID2_INIT_MX2_WARMUP_SEQUENCE);
+	LibUsb_SendCommand(XMTPT_INITIATE_WARMUP_DAILY_SEQUENCE_MX2);
 }
 
 void CConsoleHelper::ReadbackMX2_HVandI()
@@ -65,6 +65,7 @@ void CConsoleHelper::SendCommandDataMX2(TRANSMIT_PACKET_TYPE XmtCmd, string strD
 	DataLen = (int)strDataIn.length();
 	if (DataLen > 0) {
 		for(idxCh=0; idxCh < MaxDataLen; idxCh++) {
+			
 			if (idxCh < DataLen) {
 				DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
 			} else {
@@ -87,7 +88,6 @@ void CConsoleHelper::SendCommandData(TRANSMIT_PACKET_TYPE XmtCmd, BYTE DataOut[]
 		// cout << "bhavebuffer: " << bHaveBuffer << endl;
 		bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
         if (bSentPkt) {
-			cout << "\t\t\tBufferOUT: " << DP5Proto.BufferOUT << endl;
 			RemCallParsePacket(DP5Proto.PacketIn);
 		}  else {
 			cout << "SendCommandData in ConsoleHelper.cpp  - bSentPkt is false" << endl;
@@ -127,6 +127,7 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 			DP5Stat.Process_MNX_Status(&DP5Stat.STATUS_MNX);
 			//DppStatusString = DP5Stat.ShowStatusValueStrings(DP5Stat.m_DP5_Status);
 			DppStatusString = DP5Stat.MiniX2_StatusToString(DP5Stat.STATUS_MNX);
+			cout << DppStatusString << endl;
 			break;
 		case preqProcessSpectrum:
 		cout << "RemCallParsePkt: ProcessSpectrum" << endl;	
@@ -177,8 +178,34 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 	}
 }
 
+void CConsoleHelper::ProcessTimestampRecordMX2Ex(Packet_In PIN, DppStateType DppState)
+{
+	string strTimeStamp;
+	cout << "TimeStampNotCompleted" << endl;
+}
+
+void CConsoleHelper::ProcessWarmupTableMX2Ex(Packet_In PIN, DppStateType DppState)
+{
+	Process_MNX_Warmup_Table();
+}
+
+string CConsoleHelper::Process_MNX_Warmup_Table()
+{
+	string strWarmupTable("");
+	return(strWarmupTable);
+}
 
 
+void CConsoleHelper::ProcessFaultRecordMX2Ex(Packet_In PIN, DppStateType DppState)
+{
+	Process_MNX_Fault_Record(PIN);
+}
+
+string CConsoleHelper::Process_MNX_Fault_Record(Packet_In PIN)
+{
+	string strFault("");
+	return(strFault);
+}
 
 
 bool CConsoleHelper::LibUsb_Connect_Default_DPP()
@@ -287,6 +314,8 @@ bool CConsoleHelper::LibUsb_SendCommand_Config(TRANSMIT_PACKET_TYPE XmtCmd, CONF
 {
     bool bHaveBuffer;
     int bSentPkt;
+	bool bMessageSent;
+	bMessageSent = false;
 	
 	if (DppLibUsb.bDeviceConnected) {
 		memset(&DP5Proto.BufferOUT[0],0,sizeof(DP5Proto.BufferOUT));
@@ -294,7 +323,8 @@ bool CConsoleHelper::LibUsb_SendCommand_Config(TRANSMIT_PACKET_TYPE XmtCmd, CONF
 		if (bHaveBuffer) {
 			bSentPkt = DppLibUsb.SendPacketUSB(DppLibUsb.DppLibusbHandle, DP5Proto.BufferOUT, DP5Proto.PacketIn);
 			if (bSentPkt) {
-	            RemCallParsePacket(DP5Proto.PacketIn)
+				bMessageSent = true;
+	            RemCallParsePacket(DP5Proto.PacketIn);
 			}
 		}
 	}
@@ -475,7 +505,7 @@ void CConsoleHelper::ProcessCfgReadM2Ex(Packet_In PIN, DppStateType DppState)
 	strRawCfgOut = "";
 	// ==========================================================
 	// ===== Create Raw Configuration Buffer From Hardware ======
-	for (int idxCfg=0;idxCfg<PIN.LEN;idxCfg++) {
+	for (int idxCfg=0; idxCfg < PIN.LEN; idxCfg++) {
 		strCh = strfn.Format("%c",PIN.DATA[idxCfg]);
 		strRawCfgIn += strCh;
 	}

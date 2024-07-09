@@ -111,7 +111,7 @@ void ReadHVCfg()
 		cout << "\tRequesting HV and I Configuration..." << endl;
 		strCmd = "HVSE=?;CUSE=?;";
     
-    	SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
+    	chdpp.SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
 
 
 

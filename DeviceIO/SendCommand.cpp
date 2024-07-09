@@ -555,6 +555,11 @@ bool CSendCommand::POUT_Buffer(Packet_Out POUT, unsigned char Buffer[])
     CS = (CS ^ 0xFFFF) + 1;
     Buffer[POUT.LEN + 6] = (unsigned char)((CS & 0xFF00) / 256);
     Buffer[POUT.LEN + 7] = (unsigned char)(CS & 0xFF);
+	
+	for (size_t i = 0; i < POUT.LEN + 8; ++i) {
+		printf("%02X ", Buffer[i]);
+	}
+	
     return true;
 }
 
