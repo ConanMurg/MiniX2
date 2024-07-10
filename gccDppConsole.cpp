@@ -120,27 +120,27 @@ void KeepAlive()
 
 void TurnHVOn()
 {
-	cout << "\t\t\tTurning Tube On Now" << endl;
+	cout << "\t\t\tTurning Tube ON Now" << endl;
 	
 	string stringHV;
 	string stringI;
 
-	stringHV = "5";
-	stringI = "5";
+	stringHV = "15";
+	stringI = "15";
 	
 	if (chdpp.LibUsb_isConnected) { // send and receive status
 
 		chdpp.SendMX2_HVandI(stringHV, stringI);
 		ReadHVCfg();
 		bTubeOn = true;
-		for (int i = 0; i < 20; ++i)
+		for (int i = 0; i < 10; ++i)
 		{	
 			cout << i << endl;
 			//chdpp.SendMX2_HVandI(stringHV, stringI);
 			// Sleep(500);
 			// KeepAlive();
 			ReadHVCfg();
-			Sleep(500);
+			Sleep(1000);
 		}
 		
 
