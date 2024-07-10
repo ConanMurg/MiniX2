@@ -35,7 +35,6 @@ void ConnectToDefaultDPP()
 {
 	cout << endl;
 	cout << "Running DPP LibUsb tests from console..." << endl;
-	// chdpp.ListDevices();
 	cout << endl;
 	cout << "\tConnecting to default LibUsb device..." << endl;
 	if (chdpp.LibUsb_Connect_Default_DPP()) {
@@ -64,7 +63,7 @@ void GetDppStatus()
 		cout << "\tRequesting Status..." << endl;
 		if (chdpp.LibUsb_SendCommand(XMTPT_SEND_STATUS_MX2)) {	// request status
 			cout << "\t\tStatus sent." << endl;
-			cout << "\t\tReceiving status..." << endl;
+			// cout << "\t\tReceiving status..." << endl;
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}
@@ -87,7 +86,6 @@ void GetInterlockStatus()
 		cout << "\tRequesting Interlock Status..." << endl;
 		if (chdpp.LibUsb_SendCommand(XMTPT_SEND_TUBE_ILOCK_TABLE_MX2)) {	// request status
 			cout << "\t\tInterlock Status sent." << endl;
-			cout << "\t\tReceiving Interlock Status..." << endl;
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}
@@ -228,84 +226,6 @@ void Warmup()
 		cout << "Device Not Connected" << endl;
 	}
 }
-
-// void TurnHVOff()
-// {
-// 	cout << "\t\t\tTurning Tube Off Now" << endl;
-// 	float sngHV;
-// 	float sngI;
-// 	string stringHV;
-// 	string stringI;
-// 	bool bValueChanged;
-
-// 	sngHV = 0.0;
-// 	sngI = 0.0;
-// 	stringHV = "0.0";
-// 	stringI = "0.0";
-// 	if (chdpp.LibUsb_isConnected) { // send and receive status
-// 		chdpp.SendMX2_HVandI(stringHV, stringI);
-
-// 		if (chdpp.LibUsb_ReceiveData()) {
-// 			cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
-// 		} else {
-// 			cout << "\t\tError receiving Acknowledgement Packet . . ." << endl;
-// 		}
-// 	}
-// }
-
-
-// void TurnHVOffOld()
-// {
-// 	if (chdpp.LibUsb_isConnected) { // send and receive status
-// 		cout << endl;
-// 		cout << "\tTurning Off..." << endl;
-
-// 		string strHV = "0.0";
-// 		string strI = "0.0";
-// 		double dblHV;
-// 		double dblI;
-// 		string strCmd;
-// 		stringex strfn;
-
-// 		dblHV = atof(strHV.c_str());
-// 		dblI = atof(strI.c_str());
-// 		//strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
-// 		strCmd = "HVSE=";
-// 		strCmd += strfn.Format("%0.1f;", dblHV);
-// 		strCmd += "CUSE=";
-// 		strCmd += strfn.Format("%0.1f;", dblI);
-
-
-// 		unsigned char DataOut[514];
-// 		int MaxDataLen=514;
-// 		int idxCh;
-// 		int DataLen;
-// 		DataLen = (int)strDataIn.length();
-// 		if (DataLen > 0) {
-// 			for(idxCh=0; idxCh < MaxDataLen; idxCh++) {
-// 				if (idxCh < DataLen) {
-// 					DataOut[idxCh] = (unsigned char)strDataIn[idxCh];
-// 				} else {
-// 					DataOut[idxCh] = 0;
-// 				}
-// 			}
-
-// 			BOOL HaveBuffer;
-// 			BOOL SentPkt;
-
-// 			HaveBuffer = SndCmd.DP5_CMD_Data(DP5Proto.BufferOUT, XMTPT_TEXT_CONFIGURATION_MX2, DataOut);
-// 			if (HaveBuffer) {
-// 				SentPkt = DppWinUSB.SendPacketUSB(DP5Proto.BufferOUT, DppWinUSB.devInfo, DP5Proto.PacketIn);
-// 				if (SentPkt) {
-// 					RemCallParsePacket(DP5Proto.PacketIn);
-// 					} else {
-// 					MiniX2.STATUS_MNX.bUSBError = true;
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
 
 
 
