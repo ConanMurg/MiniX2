@@ -300,7 +300,12 @@ bool CSendCommand::DP5_CMD(unsigned char Buffer[], TRANSMIT_PACKET_TYPE XmtCmd)
 			POUT.PID1 = PID1_VENDOR_REQ;
 			POUT.PID2 = PID2_ETHERNET_LOCK_IP;
 			POUT.LEN=0;
-			break;	
+			break;
+		case XMTPT_SEND_FAULT_RECORD_MX2:
+			POUT.PID1 = PID1_REQ_SCOPE_MISC;
+			POUT.PID2 = PID2_SEND_MX2_FAULT_RECORD;
+			POUT.LEN=0;
+			break;
 		default:
             bCmdFound = false;
 			break;

@@ -94,12 +94,25 @@ void GetInterlockStatus()
 	}
 }
 
+void FaultRecord()
+{
+	if (chdpp.LibUsb_isConnected) {
+		cout << "\tRequesting Fault Record ..." << endl;
+    	if (chdpp.SendCommandData(XMTPT_SEND_FAULT_RECORD_MX2)) {
+			cout << "Sent Fault Record Request..." << endl;
+		} else {
+			cout << "Failed to send Fault Record Request" << endl;
+		}
+	} else {
+		cout << "Device Not Connected" << endl;
+	}
+}
+
 
 void ReadHVCfg()
 {
 	if (chdpp.LibUsb_isConnected) {
 		string strCmd;
-
 		cout << "\tRequesting HV and I Configuration..." << endl;
 		strCmd = "HVSE=?;CUSE=?;";
     	chdpp.SendCommandDataMX2(XMTPT_READ_TEXT_CONFIGURATION_MX2, strCmd);
@@ -115,7 +128,6 @@ void KeepAlive()
 {
 	chdpp.KeepMX2_Alive();
 }
-
 
 
 void TurnHVOn()

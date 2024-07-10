@@ -157,8 +157,8 @@ long CParsePacket::ParsePacket(unsigned char P[], Packet_In *PIN)
             //ParsePkt = preqProcessHwDesc;
         } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_CONFIG_READBACK)) {
             ParsePkt = preqProcessCfgRead;
-        //} else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_NETFINDER_READBACK)) {
-            //ParsePkt = preqProcessNetFindRead;
+        } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_NETFINDER_READBACK)) {
+            ParsePkt = preqProcessNetFindRead;
         } else if ((PIN->PID1 == PID1_RCV_SCOPE_MISC) && (PIN->PID2 == RCVPT_OPTION_PA_CALIBRATION)) {
             ParsePkt = preqProcessPaCal;
 //---------------------------------------------------------------------------------- Start Mini-X2
