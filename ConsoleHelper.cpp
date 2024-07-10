@@ -217,8 +217,13 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 void CConsoleHelper::ProcessNetFinderM2Ex(Packet_In PIN, DppStateType DppState)
 {
 	string strNetFinder;
+	for (int idxCfg = 0; idxCfg < PIN.LEN; idxCfg++) {
+		strCh = strfn.Format("%c", PIN.DATA[idxCfg]);
+		strNetFinder += strCh;
+	}
 
 	cout << "NetFinderPacket" << endl;
+	cout << strNetFinder << endl;
 }
 
 void CConsoleHelper::ProcessTimestampRecordMX2Ex(Packet_In PIN, DppStateType DppState)
