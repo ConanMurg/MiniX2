@@ -152,14 +152,14 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 			break;
 		case preqProcessSpectrum:
 		cout << "RemCallParsePkt: ProcessSpectrum" << endl;	
-			ProcessSpectrumEx(DP5Proto.PIN, ParsePkt.DppState);
+			ProcessSpectrumEx(PIN, ParsePkt.DppState);
 			break;
 		//case preqProcessScopeData:
 		//	ProcessScopeDataEx(DP5Proto.PIN, ParsePkt.DppState);
 		//	break;
 		case preqProcessTextData:
 			cout << "RemCallParsePkt: ProcessTextData" << endl;
-			ProcessTextDataEx(DP5Proto.PIN, ParsePkt.DppState);
+			ProcessTextDataEx(PIN, ParsePkt.DppState);
 			break;
 		//case preqProcessDiagData:
 		//	ProcessDiagDataEx(DP5Proto.PIN, ParsePkt.DppState);
@@ -187,7 +187,18 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 			break;
 		case preqProcessAck:
 			cout << "RemCallParsePkt: ProcessAck" << endl;
-			cout << ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2) << endl;
+			string strErr;
+			strErr =ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2);
+			cout << strErr << endl;
+			// if (strErr == "ACK: Bad Parameter") {
+			// 	for (size_t i = 0; i < 2; ++i) {
+			// 		printf("%02X ", PIN.)
+			// 	}
+
+			// 	for (size_t i = 0; i < POUT.LEN + 8; ++i) {
+			// 		printf("%02X ", PIN.DATA[i]);
+			// 	}
+			// }
 			break;
 		case preqProcessError:
 			cout << "RemCallParsePkt: preqProcessError" << endl;

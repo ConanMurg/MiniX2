@@ -15,6 +15,7 @@ int CDppLibUsb::InitializeLibusb()
 	int iStatus=0;
 	iStatus = libusb_init(NULL);
 	if (iStatus != 0) {
+		std::cout << "Unable to initialize libusb" << std::endl;
 		// fprintf(stderr, "Unable to initialize libusb. %s\n", libusb_strerror((libusb_error)iStatus));
 	}
 	return iStatus;

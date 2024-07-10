@@ -47,6 +47,10 @@ void CParsePacket::ParsePacketStatus(unsigned char P[], Packet_In *PIN)
     } else {
         PIN->STATUS = PID2_ACK_SYNC_ERROR ;               // sync error
     }
+    cout << "incoming packet (ParsePacketStatus in ParsePacket.cpp:)" << endl;
+    for (size_t i = 0; i < PIN->LEN + 8; ++i) {
+		printf("%02X ", P[i]);
+	}
 }
 
 string CParsePacket::PID2_TextToString(string strPacketSource, unsigned char PID2)
@@ -80,7 +84,7 @@ string CParsePacket::PID2_TextToString(string strPacketSource, unsigned char PID
       //      		[] T$ = T$ + Chr(PIN.DATA(X))
       //      	[] Next X
       //      	[] End If
-            strPID2 = strPacketSource + ": Bad Parameter\t";
+            strPID2 = strPacketSource + ": Bad Parameter";
 			break;
         case PID2_ACK_BAD_HEX_REC:
             strPID2 = strPacketSource + ": Bad HEX Record\t";

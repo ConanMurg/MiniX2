@@ -45,6 +45,11 @@ void ConnectToDefaultDPP()
 		cout << "\t\tLibUsb DPP device not connected." << endl;
 		cout << "\t\tNo LibUsb DPP device present." << endl;
 	}
+	if (chdpp.LibUsb_SendCommand(XMTPT_SEND_NETFINDER_PACKET)) {	// request status
+			cout << "\t\tNetfinder Packet." << endl;
+		} else {
+			cout << "\t\tError sending status." << endl;
+		}
 }
 
 // Get DPP Status
@@ -63,6 +68,7 @@ void GetDppStatus()
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}
+		chdpp.KeepMX2_Alive();
 	} else {
 		cout << "Device Not Connected" << endl;
 	}
@@ -102,21 +108,6 @@ void ReadHVCfg()
 		//Sleep(1000);
 		//cout << "\t\t\tkV: " << chdpp.strHV << endl;
 		//cout << "\t\t\tuA: " << chdpp.strI << endl;
-
-
-
-		// if (chdpp.LibUsb_SendCommand(XMTPT_SEND_TUBE_ILOCK_TABLE_MX2)) {
-
-		// 	chdpp.ReadbackMX2_HVandI();
-
-		// 	if (chdpp.LibUsb_ReceiveData()) {
-		// 		cout << "\t\t\tReceiving Voltage and Current..." << endl;
-		// 		cout << "\t\t\tVoltage: " << chdpp.strHV << endl;
-		// 		cout << "\t\t\tCurrent: " << chdpp.strI << endl;
-		// 	} else {
-		// 		cout << "\t\tError receiving Voltage and Current Status." << endl;
-		// 	}	
-		// }
 	} else {
 		cout << "Device Not Connected" << endl;
 	}
