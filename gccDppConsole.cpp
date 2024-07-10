@@ -45,17 +45,18 @@ void ConnectToDefaultDPP()
 		cout << "\t\tNo LibUsb DPP device present." << endl;
 	}
 	if (chdpp.LibUsb_SendCommand(XMTPT_SEND_NETFINDER_PACKET)) {	// request status
-			cout << "\t\tNetfinder Packet." << endl;
-		} else {
-			cout << "\t\tError sending status." << endl;
-		}
+		cout << "\t\t\tNetfinder Packet." << endl;
+	} else {
+		cout << "\t\t\tError sending status." << endl;
+	}
+	cout << endl;
 }
 
 // Get DPP Status
-//		CConsoleHelper::LibUsb_isConnected						// check if DPP is connected
-//		CConsoleHelper::LibUsb_SendCommand(XMTPT_SEND_STATUS)	// request status
-//		CConsoleHelper::LibUsb_ReceiveData()					// parse the status
-//		CConsoleHelper::DppStatusString							// display status string
+//		CConsoleHelper::LibUsb_isConnected							// check if DPP is connected
+//		CConsoleHelper::LibUsb_SendCommand(XMTPT_SEND_STATUS_MX2)	// request status
+//		CConsoleHelper::LibUsb_ReceiveData()						// parse the status
+//		CConsoleHelper::DppStatusString								// display status string
 void GetDppStatus()
 {
 	if (chdpp.LibUsb_isConnected) { // send and receive status
@@ -71,6 +72,7 @@ void GetDppStatus()
 	} else {
 		cout << "Device Not Connected" << endl;
 	}
+	cout << endl;
 }
 
 
@@ -94,6 +96,7 @@ void GetInterlockStatus()
 	}
 }
 
+// Get Fault Record
 void FaultRecord()
 {
 	if (chdpp.LibUsb_isConnected) {
