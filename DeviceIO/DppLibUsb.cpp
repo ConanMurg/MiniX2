@@ -1,4 +1,5 @@
 #include "DppLibUsb.h"
+#include <iostream>
 
 CDppLibUsb::CDppLibUsb(void)
 {

@@ -37,6 +37,7 @@ public:
 
 	/// LibUsb communications class.
 	CDppLibUsb DppLibUsb;
+	CDP5Status DP5Status;
 	/// LibUsb is connected if true.
 	bool LibUsb_isConnected;
 	/// LibUsb number of devices found.
@@ -46,6 +47,8 @@ public:
 	void SendMX2_Volume(string strVol);
 	/// Turn HV on / off
 	void SendMX2_HVandI(string stringHV, string stringI);
+	//
+	void SendMX2_HV(string stringHV);
 	//
 	void DailyWarmup();
 	/// Find HV and I configuration
@@ -58,6 +61,8 @@ public:
 	void RemCallParsePacket(BYTE PacketIn[]);
 	//
 	void ParsePacketEx(Packet_In PIN, DppStateType DppState);
+	//
+	void ProcessNetFinderM2Ex(Packet_In PIN, DppStateType DppState);
 	//
 	void ProcessTimestampRecordMX2Ex(Packet_In PIN, DppStateType DppState);
 	//

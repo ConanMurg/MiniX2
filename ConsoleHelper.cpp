@@ -54,10 +54,29 @@ void CConsoleHelper::SendMX2_HVandI(string stringHV, string stringI)
 	dblHV = atof(stringHV.c_str());
 	dblI = atof(stringI.c_str());
     //strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
+	// strCmd = "RESC=Y;";
 	strCmd = "HVSE=";
-	strCmd += strfn.Format("%0.1f;", dblHV);
+	strCmd += strfn.Format("%0.2f;", dblHV);
 	strCmd += "CUSE=";
-	strCmd += strfn.Format("%0.1f;", dblI);
+	strCmd += strfn.Format("%0.2f;", dblI);
+	cout << "strCmd: " << strCmd << endl;
+
+    SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
+}
+
+void CConsoleHelper::SendMX2_HV(string stringHV)
+{
+	double dblHV;
+	
+    string strCmd;
+	stringex strfn;
+
+	dblHV = atof(stringHV.c_str());
+	
+    //strCmd = "HVSE=" + Trim(Val(strHV)) + ";CUSE=" + Trim(Val(strI)) + ";";
+	strCmd = "HVSE=";
+	strCmd += strfn.Format("%0.2f;", dblHV);
+	
 	cout << "strCmd: " << strCmd << endl;
 
     SendCommandDataMX2(XMTPT_TEXT_CONFIGURATION_MX2, strCmd);
@@ -191,9 +210,9 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 			break;
 		case preqProcessAck:
 			cout << "RemCallParsePkt: ProcessAck" << endl;
-			string strErr;
-			strErr =ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2);
-			cout << strErr << endl;
+			//string strErr;
+			cout<< ParsePkt.PID2_TextToString("ACK", DP5Proto.PIN.PID2) <<endl;
+			// cout << strErr << endl;
 			// if (strErr == "ACK: Bad Parameter") {
 			// 	for (size_t i = 0; i < 2; ++i) {
 			// 		printf("%02X ", PIN.)
@@ -217,6 +236,8 @@ void CConsoleHelper::ParsePacketEx(Packet_In PIN, DppStateType DppState)
 void CConsoleHelper::ProcessNetFinderM2Ex(Packet_In PIN, DppStateType DppState)
 {
 	string strNetFinder;
+	string strCh;
+	stringex strfn;
 	for (int idxCfg = 0; idxCfg < PIN.LEN; idxCfg++) {
 		strCh = strfn.Format("%c", PIN.DATA[idxCfg]);
 		strNetFinder += strCh;
@@ -234,7 +255,8 @@ void CConsoleHelper::ProcessTimestampRecordMX2Ex(Packet_In PIN, DppStateType Dpp
 
 void CConsoleHelper::ProcessWarmupTableMX2Ex(Packet_In PIN, DppStateType DppState)
 {
-	Process_MNX_Warmup_Table();
+	cout << "Not Configured Yet" << endl;
+	//Process_MNX_Warmup_Table();
 }
 
 string CConsoleHelper::Process_MNX_Warmup_Table()
@@ -243,85 +265,86 @@ string CConsoleHelper::Process_MNX_Warmup_Table()
 	return(strWarmupTable);
 }
 
-string CConsoleHelper::Process_MNX_Fault_Record(Packet_In PIN)
-{
-	string strFault("");
-	unsigned char PIN_buffer[520];
-	long idxData;
-	Packet_In MX2PIN;
-	Stat_MNX STATUS_MNX2;
-	TubeInterlockTableType TubeInterlockTableMX2;
-	MiniX2WarmUpTable WarmUpTableMX2;
-	string strNowDTS("");
-	float flTemp=0.0;
-	stringex strfn;
+// string CConsoleHelper::Process_MNX_Fault_Record(Packet_In PIN)
+// {
+// 	string strFault("");
+// 	unsigned char PIN_buffer[520];
+// 	long idxData;
+// 	Packet_In MX2PIN;
+// 	Stat_MNX STATUS_MNX2;
+// 	TubeInterlockTableType TubeInterlockTableMX2;
+// 	MiniX2WarmUpTable WarmUpTableMX2;
+// 	string strNowDTS("");
+// 	float flTemp=0.0;
+// 	stringex strfn;
 
-	strFault = "======= Fault Record ===========\r\n";
-	strFault += "======= Unit Info ===========\r\n";
-	strNowDTS = GetNowTimeString();
-	strFault += "Fault Record read at: " + strNowDTS + "\r\n";
+// 	strFault = "======= Fault Record ===========\r\n";
+// 	strFault += "======= Unit Info ===========\r\n";
+// 	strNowDTS = GetNowTimeString();
+// 	strFault += "Fault Record read at: " + strNowDTS + "\r\n";
 
-	//-----------------------------------------------------------------
-	//---- Save the data to local storage -----------------------------
-	//-----------------------------------------------------------------
-	memset(PIN_buffer,0,sizeof(PIN_buffer));
-	for(idxData=0; idxData<PIN.LEN; idxData++) {
-		PIN_buffer[idxData] = PIN.DATA[idxData];	// copy the fault record packet
-	}
+// 	//-----------------------------------------------------------------
+// 	//---- Save the data to local storage -----------------------------
+// 	//-----------------------------------------------------------------
+// 	memset(PIN_buffer,0,sizeof(PIN_buffer));
+// 	for(idxData=0; idxData<PIN.LEN; idxData++) {
+// 		PIN_buffer[idxData] = PIN.DATA[idxData];	// copy the fault record packet
+// 	}
 
-	//-----------------------------------------------------------------
-	//---- Get the timestamp table ------------------------------------
-	//-----------------------------------------------------------------
-	memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
-	MakeFaultMX2Packet(ftptTimestamp, &MX2PIN, PIN_buffer, 1, 15);
-	time_t ttTimeStamp;		// holds tm for calcs, not used here
-	strFault += "Fault occurred at: ";
-	strFault += Process_MNX_Timestamp(MX2PIN, &ttTimeStamp);
-	strFault += "\r\n";
+// 	//-----------------------------------------------------------------
+// 	//---- Get the timestamp table ------------------------------------
+// 	//-----------------------------------------------------------------
+// 	memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
+// 	MakeFaultMX2Packet(ftptTimestamp, &MX2PIN, PIN_buffer, 1, 15);
+// 	time_t ttTimeStamp;		// holds tm for calcs, not used here
+// 	strFault += "Fault occurred at: ";
+// 	strFault += Process_MNX_Timestamp(MX2PIN, &ttTimeStamp);
+// 	strFault += "\r\n";
 
-	//-----------------------------------------------------------------
-	//---- Get the status ---------------------------------------------
-	//-----------------------------------------------------------------
-	//memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
-	MakeFaultMX2Packet(ftptStatus, &MX2PIN, PIN_buffer, 18, 81);
-	for(idxData=0; idxData<MX2PIN.LEN; idxData++) {		// load the raw data into the status packet
-		STATUS_MNX2.RAW[idxData] = MX2PIN.DATA[idxData];	// copy the fault record packet
-	}
-	Process_MNX_Status(&STATUS_MNX2);
-	strFault += MiniX2_StatusToString(STATUS_MNX2);
+// 	//-----------------------------------------------------------------
+// 	//---- Get the status ---------------------------------------------
+// 	//-----------------------------------------------------------------
+// 	//memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
+// 	MakeFaultMX2Packet(ftptStatus, &MX2PIN, PIN_buffer, 18, 81);
+// 	for(idxData=0; idxData<MX2PIN.LEN; idxData++) {		// load the raw data into the status packet
+// 		STATUS_MNX2.RAW[idxData] = MX2PIN.DATA[idxData];	// copy the fault record packet
+// 	}
+// 	Process_MNX_Status(&STATUS_MNX2);
+// 	strFault += MiniX2_StatusToString(STATUS_MNX2);
 
-	//////////-----------------------------------------------------------------
-	//////////---- Get the Tube Table -----------------------------------------
-	//////////-----------------------------------------------------------------
-	//strFault += "======= Tube Table ===========\r\n";
-	memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
-	MakeFaultMX2Packet(ftptTube, &MX2PIN, PIN_buffer, 82, 175);
-	strFault += Process_MNX_Tube_Table(MX2PIN, &TubeInterlockTableMX2);
+// 	//////////-----------------------------------------------------------------
+// 	//////////---- Get the Tube Table -----------------------------------------
+// 	//////////-----------------------------------------------------------------
+// 	//strFault += "======= Tube Table ===========\r\n";
+// 	memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
+// 	MakeFaultMX2Packet(ftptTube, &MX2PIN, PIN_buffer, 82, 175);
+// 	strFault += Process_MNX_Tube_Table(MX2PIN, &TubeInterlockTableMX2);
 
-	//-----------------------------------------------------------------
-	//---- Get the Warmup Table ---------------------------------------
-	//-----------------------------------------------------------------
-	//strFault += "======= Warmup Table ===========\r\n";
-	memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
-	MakeFaultMX2Packet(ftptWarmup, &MX2PIN, PIN_buffer, 176, 223);
-	strFault += Process_MNX_Warmup_Table(MX2PIN, &WarmUpTableMX2, WarmUpTableTypeMX2);
+// 	//-----------------------------------------------------------------
+// 	//---- Get the Warmup Table ---------------------------------------
+// 	//-----------------------------------------------------------------
+// 	//strFault += "======= Warmup Table ===========\r\n";
+// 	memset(MX2PIN.DATA,0,sizeof(MX2PIN.DATA));
+// 	MakeFaultMX2Packet(ftptWarmup, &MX2PIN, PIN_buffer, 176, 223);
+// 	strFault += Process_MNX_Warmup_Table(MX2PIN, &WarmUpTableMX2, WarmUpTableTypeMX2);
 
-	strFault += "======= Additional Fault Info ===========\r\n";
+// 	strFault += "======= Additional Fault Info ===========\r\n";
 
-	flTemp = (float)((((float)(PIN_buffer[226] & 127) * 256.0) + (float)PIN_buffer[227]) / 256.0);
-	strFault += "Tube HV Setpoint: " + strfn.Format("%0.2fkV\r\n",flTemp);
+// 	flTemp = (float)((((float)(PIN_buffer[226] & 127) * 256.0) + (float)PIN_buffer[227]) / 256.0);
+// 	strFault += "Tube HV Setpoint: " + strfn.Format("%0.2fkV\r\n",flTemp);
 
-	flTemp = (float)((((float)(PIN_buffer[228] & 127) * 256.0) + (float)PIN_buffer[229]) / 256.0);
-	strFault += "Tube Current Setpoint: " + strfn.Format("%0.2fuA\r\n", flTemp);
+// 	flTemp = (float)((((float)(PIN_buffer[228] & 127) * 256.0) + (float)PIN_buffer[229]) / 256.0);
+// 	strFault += "Tube Current Setpoint: " + strfn.Format("%0.2fuA\r\n", flTemp);
 
-	return(strFault);
-}
+// 	return(strFault);
+// }
 
 
 void CConsoleHelper::ProcessFaultRecordMX2Ex(Packet_In PIN, DppStateType DppState)
 {
 	string strFault;
-	strFault = Process_MNX_Fault_Record(PIN);
+	// CDP5Status DP5Status;
+	strFault = DP5Status.Process_MNX_Fault_Record(PIN);
 	cout << strFault << endl;
 }
 

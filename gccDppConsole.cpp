@@ -44,12 +44,16 @@ void ConnectToDefaultDPP()
 		cout << "\t\tLibUsb DPP device not connected." << endl;
 		cout << "\t\tNo LibUsb DPP device present." << endl;
 	}
+	cout << endl;
+}
+
+void NetFinder()
+{
 	if (chdpp.LibUsb_SendCommand(XMTPT_SEND_NETFINDER_PACKET)) {	// request status
 		cout << "\t\t\tNetfinder Packet." << endl;
 	} else {
 		cout << "\t\t\tError sending status." << endl;
 	}
-	cout << endl;
 }
 
 // Get DPP Status
@@ -68,7 +72,7 @@ void GetDppStatus()
 		} else {
 			cout << "\t\tError sending status." << endl;
 		}
-		chdpp.KeepMX2_Alive();
+		// chdpp.KeepMX2_Alive();
 	} else {
 		cout << "Device Not Connected" << endl;
 	}
@@ -101,7 +105,7 @@ void FaultRecord()
 {
 	if (chdpp.LibUsb_isConnected) {
 		cout << "\tRequesting Fault Record ..." << endl;
-    	if (chdpp.SendCommandData(XMTPT_SEND_FAULT_RECORD_MX2)) {
+    	if (chdpp.LibUsb_SendCommand(XMTPT_SEND_FAULT_RECORD_MX2)) {
 			cout << "Sent Fault Record Request..." << endl;
 		} else {
 			cout << "Failed to send Fault Record Request" << endl;
@@ -140,8 +144,8 @@ void TurnHVOn()
 	string stringHV;
 	string stringI;
 
-	stringHV = "15";
-	stringI = "15";
+	stringHV = "15.00";
+	stringI = "15.00";
 	
 	if (chdpp.LibUsb_isConnected) { // send and receive status
 
@@ -174,7 +178,7 @@ void TurnHVOn()
 
 void TurnVolumeOn()
 {
-	cout << "\t\t\tTurning Volume OFF Now" << endl;
+	cout << "\t\t\tTurning Volume ON Now" << endl;
 	string strVol;
 
 	strVol= "ON";
@@ -213,12 +217,12 @@ void TurnHVOff()
 	string stringHV;
 	string stringI;
 
-	stringHV = "0";
-	stringI = "0";
+	stringHV = "0.00";
+	stringI = "0.00";
 	
 	if (chdpp.LibUsb_isConnected) { // send and receive status
 
-		chdpp.SendMX2_HVandI(stringHV, stringI);
+		chdpp.SendMX2_HV(stringHV);
 
 	} else {
 	cout << "Device not connected" << endl;
@@ -230,10 +234,9 @@ void Warmup()
 	cout << "Running Daily Warmup" << endl;
 	if (chdpp.LibUsb_isConnected) {
 		chdpp.DailyWarmup();
-		bTubeOn = true;
 		for (int i = 0; i < 30; ++i)
 		{
-			ReadHVCfg;
+			ReadHVCfg();
 			Sleep(1000);
 		}
 		TurnHVOff();
@@ -504,6 +507,10 @@ int main(int argc, char* argv[])
 
 	if(!chdpp.LibUsb_isConnected) { return 1; }
 
+	NetFinder();
+	cout << "Press The Enter Key to continue . . . ";
+	_getch();
+
 	//system(CLEAR_TERM);
 	chdpp.DP5Stat.m_DP5_Status.SerialNumber = 0;
 	GetDppStatus();
@@ -555,6 +562,7 @@ int main(int argc, char* argv[])
 				cout << "5 - Read kV and uA" << endl;
 				cout << "6 - Set Volume OFF" << endl;
 				cout << "7 - Set Volume On" << endl;
+				cout << "8 - Fault Record" << endl;
 				cout << "9 - Disconnect" << endl;
 				break;
 			case 1:
@@ -577,6 +585,12 @@ int main(int argc, char* argv[])
 				break;
 			case 7:
 				TurnVolumeOn();
+				break;
+			case 8:
+				FaultRecord();
+				break;
+			case 99:
+				KeepAlive();
 				break;
 			default:
 				cout << "Invalid Input" << endl;
