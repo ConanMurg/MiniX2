@@ -69,17 +69,21 @@ libusb_device_handle * CDppLibUsb::FindUSBDevice(int idxAmptekDevice)
 	if (found) {
 		r = libusb_open(found, &handle);
 		if (r < 0) {
+			std::cout << "Unable to Open USB Device" << std::endl;
 			// fprintf(stderr, libusb_strerror((libusb_error)r));
 			handle = NULL;
 		} else {
 			if (handle != NULL) {
 				r = libusb_claim_interface(handle, INTERFACE_NUMBER);
 				if (r >= 0) {
+					std::cout << "Device Connected and Interface Claimed" << std::endl;
 					bDeviceConnected = true; // have interface
 				} else {
+					std::cout << "Unable to claim interface" << std::endl;
 					// fprintf(stderr, "libusb_claim_interface error %s\n", libusb_strerror((libusb_error)r));
 				}
 			} else {
+				std::cout << "Unable to Find USB Device" << std::endl;
 				// fprintf(stderr, "Unable to find a dpp device.\n");
 			}
 		}
