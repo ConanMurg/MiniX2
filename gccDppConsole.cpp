@@ -136,6 +136,24 @@ void KeepAlive()
 	chdpp.KeepMX2_Alive();
 }
 
+void TurnHVOff()
+{
+	cout << "\t\t\tTurning Tube OFF Now" << endl;
+	bTubeOn = false;
+	string stringHV;
+	string stringI;
+
+	stringHV = "0.00";
+	stringI = "0.00";
+	
+	if (chdpp.LibUsb_isConnected) { // send and receive status
+
+		chdpp.SendMX2_HV(stringHV);
+
+	} else {
+	cout << "Device not connected" << endl;
+	}
+}
 
 void TurnHVOn()
 {
@@ -150,18 +168,21 @@ void TurnHVOn()
 	if (chdpp.LibUsb_isConnected) { // send and receive status
 
 		chdpp.SendMX2_HVandI(stringHV, stringI);
-		ReadHVCfg();
+		GetDppStatus();
 		bTubeOn = true;
-		for (int i = 0; i < 10; ++i)
+		for (int i = 0; i < 210; ++i)
 		{	
 			cout << i << endl;
 			//chdpp.SendMX2_HVandI(stringHV, stringI);
 			// Sleep(500);
 			// KeepAlive();
-			ReadHVCfg();
-			Sleep(1000);
+			GetDppStatus();
+			if (! bTubeOn) {
+				break;
+			}
+			Sleep(200);
 		}
-		
+		TurnHVOff();
 
 		// if (chdpp.LibUsb_ReceiveData()) {
 		// 	cout << "\t\t\tReceiving Acknowledgement Packet..." << endl;
@@ -210,24 +231,7 @@ void TurnVolumeOff()
 }
 
 
-void TurnHVOff()
-{
-	cout << "\t\t\tTurning Tube OFF Now" << endl;
-	bTubeOn = false;
-	string stringHV;
-	string stringI;
 
-	stringHV = "0.00";
-	stringI = "0.00";
-	
-	if (chdpp.LibUsb_isConnected) { // send and receive status
-
-		chdpp.SendMX2_HV(stringHV);
-
-	} else {
-	cout << "Device not connected" << endl;
-	}
-}
 
 void Warmup()
 {
