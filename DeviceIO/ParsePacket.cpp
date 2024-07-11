@@ -61,7 +61,7 @@ string CParsePacket::PID2_TextToString(string strPacketSource, unsigned char PID
 		case PID2_ACK_OK:    // ACK OK
             //PID2_TextToString = strPacketSource + ": OK\t";
             //strPID2 = "ACK_OK";
-			strPID2 = "";
+			strPID2 = ": OK";
             //ACK_Received = True
  			break;
         case PID2_ACK_SYNC_ERROR:
@@ -89,6 +89,9 @@ string CParsePacket::PID2_TextToString(string strPacketSource, unsigned char PID
         case PID2_ACK_BAD_HEX_REC:
             strPID2 = strPacketSource + ": Bad HEX Record\t";
 			break;
+        case PID2_ACK_UNRECOG:
+            strPID2 = strPacketSource + ": Unrecognized Command\t";
+			break;
         case PID2_ACK_FPGA_ERROR:
             strPID2 = strPacketSource + ": FPGA not initialized\t";
 			break;
@@ -107,12 +110,18 @@ string CParsePacket::PID2_TextToString(string strPacketSource, unsigned char PID
         case PID2_ACK_ETHERNET_BUSY:
             strPID2 = strPacketSource + ": Ethernet sharing request\t";
 			break;
+        case PID2_ACK_I2C_ERROR:
+            strPID2 = strPacketSource + ": I2C Error\t";
+            break;
+        case PID2_ACK_OK_FPGA_UPLOAD_ADDR:
+            strPID2 = strPacketSource + ": OK + FPGA upload adress\t";
+            break;
+        case PID2_ACK_FEATURE_NOT_FPGA_SUPPORTED:
+            strPID2 = strPacketSource + ": Feature not supported by this FPGA Version\t";
+            break;
     		//[] Case :TextLog "ACK: PC5 NOT DETECTED '" + T$ + "'" + vbCrLf
         case PID2_ACK_CAL_DATA_NOT_PRESENT:
             strPID2 = strPacketSource + ": Calibration data not present\t";
-			break;
-        case PID2_ACK_UNRECOG:
-            strPID2 = strPacketSource + ": Unrecognized Command\t";
 			break;
 		default:
 			strPID2 = strPacketSource + ": Unrecognized Error\t";
