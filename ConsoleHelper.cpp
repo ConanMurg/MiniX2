@@ -370,7 +370,7 @@ bool CConsoleHelper::LibUsb_Connect_Default_DPP()
 	} else {
 	}
 	if (DppLibUsb.NumDevices > 0) {
-		DppLibUsb.CurrentDevice = 1;	// set to default device
+		DppLibUsb.CurrentDevice = 2;	// set to default device
 		DppLibUsb.DppLibusbHandle = DppLibUsb.FindUSBDevice(DppLibUsb.CurrentDevice); //connect
 		if (DppLibUsb.bDeviceConnected) { // connection detected
 			LibUsb_isConnected = true;
